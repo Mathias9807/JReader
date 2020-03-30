@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+	<meta charset="utf-8"></meta>
+	<title>JReader</title>
+
+	<script src="jquery-3.4.1.min.js" type="text/javascript"></script>
+
+	<style>
+html {
+	font-size: 24pt;
+	width: 100%;
+	height: 100%;
+}
+body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+/* .jr-new { background: #B3F0FF; border-radius: 7px; white-space: nowrap; } */
+/* .jr-hl { background: #F2F23F; border-radius: 7px; white-space: nowrap; } */
+.jr-new { border-bottom: 3px solid #22D; border-radius: 7px; white-space: nowrap; }
+.jr-hl { border-bottom: 3px solid #FFAC0F; border-radius: 7px; white-space: nowrap; }
+.flex { display: flex; }
+.vertical { flex-direction: column; }
+.horizontal { flex-direction: row; }
+.mainCenter { justify-content: center; }
+.subCenter { align-items: center; }
+.center { justify-content: center; align-items: center;  }
+	</style>
+</head>
+<body>
+	<div>
+		それは小さな村でした。外壁代わりに並べてある申し分程度の柵に沿って歩けば、一時間以内には元の場所まで戻ってこれそうな程度の広さ。
+
+		<p>
+　民家の数は、およそ数十軒程度。同じような外観をした木造の民家が点在しており、隙間を埋めるように小さな畑や井戸が置かれています。
+	</div>
+
+	<template id="jr-new"><span class="jr-new"></span></template>
+	<template id="jr-hl"><span class="jr-hl"></span></template>
+	<script src="script.js" type="text/javascript"></script>
+</body>
+</html>
