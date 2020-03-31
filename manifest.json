@@ -9,9 +9,13 @@
   "applications": {
     "gecko": {
       "id": "mathias9807@gmail.com",
-      "strict_min_version": "42.0"
+      "strict_min_version": "57.0"
     }
   },
+
+  "permissions": [
+    "storage", "unlimitedStorage"
+  ],
 
   "icons": {
     "48": "icons/jreader-48.png",
@@ -20,8 +24,14 @@
 
   "content_scripts": [
     {
-      "matches": ["all_urls"],
-      "js": ["jquery-3.4.1.min.js", "jreader.js"]
+      "matches": ["<all_urls>"],
+      "js": ["jquery-3.4.1.min.js", "jreader.js"],
+      "css": ["jreader.css"],
+      "run_at": "document_end"
     }
+  ],
+
+  "web_accessible_resources": [
+    "JMdict_e.json"
   ]
 }

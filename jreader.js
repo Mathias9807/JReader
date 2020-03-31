@@ -5,47 +5,46 @@ var text = content.textContent;
 var forcedBreaks = [];
 var breaks = [];
 var words = [];
-var searchMaxLen = 15;
+var searchMaxLen = 7;
 
-console.log("Attempting to fetch dictionary and indexes from localstorage");
-var d_index = window.localStorage.getItem("d_index");
-// Key-value from: Kanji reading of word -> array of indices in dict
-var k_index = window.localStorage.getItem("k_index");
-// Key-value from: Kana reading of word -> array of indices in dict
-var r_index = window.localStorage.getItem("r_index");
+var d_index, k_index, r_index, uDict, oDict;
 
-// Fetch user dictionary
-var uDict = new Set();
-if (window.localStorage.getItem("uDict"))
-  uDict = new Set(JSON.parse(window.localStorage.getItem("uDict")));
+loadIndexes();
+parsePage();
 
-// Fetch unknown words dictionary
-var oDict = new Set();
-if (window.localStorage.getItem("oDict"))
-  oDict = new Set(JSON.parse(window.localStorage.getItem("oDict")));
+async function loadIndexes() {
+  console.log("Attempting to fetch dictionary and indexes from localstorage");
+  d_index = await browser.storage.local.get("d_index");
+  // Key-value from: Kanji reading of word -> array of indices in dict
+  k_index = await browser.storage.local.get("k_index");
+  // Key-value from: Kana reading of word -> array of indices in dict
+  r_index = await browser.storage.local.get("r_index");
+
+  // Fetch user dictionary
+  uDict = new Set();
+  var uDictStorage = await browser.storage.local.get("uDict");
+  if ($.isArray(uDictStorage))
+    uDict = new Set(uDictStorage);
+
+  // Fetch unknown words dictionary
+  oDict = new Set();
+  var oDictStorage = await browser.storage.local.get("oDict");
+  if ($.isArray(oDictStorage))
+    oDict = new Set(oDictStorage);
+}
 
 // Load dict and the indices, from localstorage if there
 async function loadDict() {
   if (d_index && k_index && r_index) {
-    d_index = JSON.parse(d_index);
-    k_index = JSON.parse(k_index);
-    r_index = JSON.parse(r_index);
     console.log("Using cached dictionary");
     return;
   }
 
-  // Get the dictionary either from localstorage or download it
-  var dict = window.localStorage.getItem("dict");
-  if (dict) {
-    dict = JSON.parse(dict);
-
-  }else {
-    console.log("Downloading dictionary...");
-    var resp = await fetch("JMdict_e.json");
-    dict = await resp.json();
-
-    console.log("\tDone");
-  }
+  // Get the dictionary
+  console.log("Downloading dictionary...");
+  var resp = await fetch(browser.runtime.getURL("JMdict_e.json"));
+  var dict = await resp.json();
+  console.log("\tDone");
 
   // Index the dict ent_seq ids
   d_index = {};
@@ -82,16 +81,12 @@ async function loadDict() {
 
   console.log("Indexed dictionary");
 
-  // Store the dict and indexes
-  console.log("Saving dictionary and indexes");
+  // Store the indexes
+  console.log("Saving the indexes");
   try {
-    window.localStorage.setItem("dict", JSON.stringify(dict));
-  }catch (e) {
-  }
-  try {
-    window.localStorage.setItem("d_index", JSON.stringify(d_index));
-    window.localStorage.setItem("k_index", JSON.stringify(k_index));
-    window.localStorage.setItem("r_index", JSON.stringify(r_index));
+    await browser.storage.local.set({"d_index": d_index});
+    await browser.storage.local.set({"k_index": k_index});
+    await browser.storage.local.set({"r_index": r_index});
   }catch (e) {
   }
 
@@ -108,7 +103,6 @@ async function parsePage() {
 
   // clearMarking(content);
 }
-parsePage();
 
 // Find word breaks in text
 function findBreaks() {
@@ -133,12 +127,6 @@ function findBreaks() {
     }
   }
 
-  // var output = "";
-  // for (var l in words) {
-  //   output += words[l] + " ";
-  // }
-  // console.log(output);
-
   console.log("Matching words against user dictionary...");
   for (var i = 0; i < breaks.length; i++) {
     var word = words[i];
@@ -150,14 +138,14 @@ function findBreaks() {
   console.log("\tDone");
 }
 
-function addAllMarkedWords() {
+async function addAllMarkedWords() {
   var nWordsPre = uDict.size;
   for (var i = 0; i < words.length; i++) {
     var dIndex = dictIndex(words[i]);
     if (oDict.has(dIndex) == false)
       uDict.add(dIndex);
   }
-  window.localStorage.setItem("uDict", JSON.stringify([...uDict]));
+  await browser.storage.local.set({"uDict": [...uDict]});
   console.log("Added", uDict.size - nWordsPre, "words!");
 
   // Reflow words
@@ -166,16 +154,6 @@ function addAllMarkedWords() {
 }
 document.addEventListener('keyup', e => {
   if (e.ctrlKey && !e.shiftKey && e.keyCode == 90) addAllMarkedWords();
-}, false);
-
-document.addEventListener('keyup', e => {
-  if (e.ctrlKey && e.shiftKey && e.keyCode == 90) {
-    Clipboard.readText().then(text => {
-      console.log('Pasted content: ', text);
-    }).catch(err => {
-      console.error('Failed to read clipboard contents: ', err);
-    });
-  }
 }, false);
 
 function getWordAt(from) {
@@ -344,7 +322,7 @@ function dictIndex(word) {
   return d_index[index];
 }
 
-function textClicked(e) {
+async function textClicked(e) {
   let range;
 
   // User clicked, toggle a forced break on this word and add it to the users dict
@@ -386,7 +364,7 @@ function textClicked(e) {
       }
     }
 
-    window.localStorage.setItem("oDict", JSON.stringify([...oDict]));
+    await browser.storage.local.set({"oDict": [...oDict]});
 
   // If the user clicked a break
   // Toggle between adding it to uDict and removing it
@@ -408,7 +386,7 @@ function textClicked(e) {
       console.log("Add", word, "("+base+")", "to uDict");
     }
 
-    window.localStorage.setItem("uDict", JSON.stringify([...uDict]));
+    await browser.storage.local.set({"uDict": [...uDict]});
 
   }else {
     // Otherwise, add this point as a forced break
@@ -466,8 +444,8 @@ function nextTextNode(node) {
   return node;
 }
 function addHlSpan(node, className) {
-  var hl = document.getElementById(className).content.cloneNode(true);
-  hl.childNodes[0].innerHTML = node.nodeValue;
+  var hl = $('<span class="'+className+'"></span>')[0];
+  hl.innerHTML = node.nodeValue;
   node.replaceWith(hl);
 }
 
@@ -534,8 +512,8 @@ function addHlOld(node, start, len, className) {
   var marked = node;
   if (start > 0) marked = marked.splitText(start);
   marked.splitText(len);
-  var hl = document.getElementById(className).content.cloneNode(true);
-  hl.childNodes[0].innerHTML = marked.nodeValue;
+  var hl = $('<span class="'+className+'"></span>')[0];
+  hl.innerHTML = marked.nodeValue;
   marked.replaceWith(hl);
   node.normalize();
 }
