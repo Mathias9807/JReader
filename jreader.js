@@ -123,7 +123,9 @@ async function parsePage() {
     return;
   }
 
-  text = content.textContent;
+  var temp = $(content).clone();
+  temp.find("rt").remove();
+  text = temp[0].textContent;
 
   // Try to find all the words in the text
   console.log("Parsing page for word breaks");
@@ -187,6 +189,7 @@ document.addEventListener('keyup', e => {
     if (content) {
       searchingForDiv = true;
       clearMarking(content);
+      content.removeEventListener('click', textClicked);
       content = null;
     }else {
       document.body.addEventListener('mousemove', highlightHover, false);
@@ -371,6 +374,7 @@ async function textClicked(e) {
   // Get selection
   var sel = document.getSelection();
   var textNode = sel.focusNode;
+  if (textNode.parentNode.tagName === "RT") return;
   var offset = sel.focusOffset;
   var globalOffs = flatIndex(content, textNode, offset);
 
@@ -455,8 +459,11 @@ function flatIndex(pNode, target, index) {
     if (cNode == target)
       return newIndex + index;
 
-    if (!cNode.contains(target))
-      newIndex += cNode.textContent.length;
+    if (!cNode.contains(target)) {
+      var temp = $(cNode).clone();
+      temp.find("rt").remove();
+      newIndex += temp[0].textContent.length;
+    }
 
     // if it does have target as child, recurse
     else return newIndex + flatIndex(cNode, target, index);
@@ -465,7 +472,8 @@ function flatIndex(pNode, target, index) {
 
 function nextTextNode(node) {
   do {
-    if (node.childNodes.length > 0)           // Search child nodes
+    if (node.childNodes.length > 0            // Search child nodes
+        && node.tagName!=="RT")               // Always skip <rt> furigana tags
       node = node.childNodes[0];
     else if (node.nextSibling) {              // Search siblings
       node = node.nextSibling;
