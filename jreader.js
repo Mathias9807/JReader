@@ -492,6 +492,7 @@ function addHlSpan(node, className) {
   var hl = $('<span class="'+className+'"></span>')[0];
   hl.innerHTML = node.nodeValue;
   node.replaceWith(hl);
+  return hl;
 }
 
 function markText(node, start, len) { addHl(node, start, len, 'jr-new'); }
@@ -501,6 +502,7 @@ function addHl(node, start, len, className) {
 	// list containing every text node to highlight
   var textNodes = [];
   var origNode = node;
+  var hlNode = null;
 
 	// Start on the starting node and search for the text node containing the 'start' text
   if (node.nodeType !== Node.TEXT_NODE) node = nextTextNode(node);
@@ -515,7 +517,7 @@ function addHl(node, start, len, className) {
   if (len < node.textContent.length) node.splitText(len);
   if (len <= node.textContent.length) {
 		// If so, highlight that node and return here
-    addHlSpan(node, className);
+    hlNode = addHlSpan(node, className);
     return;
   }
 	// Add this first text node to list
@@ -531,36 +533,20 @@ function addHl(node, start, len, className) {
       if (len < node.textContent.length) node.splitText(len);
 
 			// If so, highlight every node in list and return
-      for (var i = 0; i < textNodes.length; i++) {
-        addHlSpan(textNodes[i], className);
+      hlNode = addHlSpan(textNodes[0], className);
+      $(hlNode).addClass("jr-l"); // Also remove right border-radius
+      for (var i = 1; i < textNodes.length; i++) {
+        hlNode = addHlSpan(textNodes[i], className);
+        // Remove border-radius on both sides
+        $(hlNode).addClass("jr-m");
       }
+      $(hlNode).removeClass("jr-m");
+      $(hlNode).addClass("jr-r");
       origNode.normalize();
       return;
     }
     len -= node.textContent.length;
   }
-}
-function addHlOld(node, start, len, className) {
-  if (!node) return;
-
-  // Check if the start index is in this node or if it flows over to the next sibling
-  while (start >= node.textContent.length) {
-    start -= node.textContent.length;
-    node = node.nextSibling;
-  }
-
-  // If this is not a text node, recurse into first child
-  if (!node.splitText) {
-    addHl(node.childNodes[0], start, len, className);
-    return;
-  }
-  var marked = node;
-  if (start > 0) marked = marked.splitText(start);
-  marked.splitText(len);
-  var hl = $('<span class="'+className+'"></span>')[0];
-  hl.innerHTML = marked.nodeValue;
-  marked.replaceWith(hl);
-  node.normalize();
 }
 function clearMarking(node) {
   $(node).find(".jr-new").contents().unwrap();

@@ -2,6 +2,9 @@
 /* .jr-hl { background: #F2F23F; border-radius: 7px; white-space: nowrap; } */
 .jr-new { border-bottom: 3px solid #22D; border-radius: 7px; white-space: nowrap; }
 .jr-hl { border-bottom: 3px solid #FFAC0F; border-radius: 7px; white-space: nowrap; }
+.jr-l { border-bottom-right-radius: 0; }
+.jr-m { border-radius: 0; }
+.jr-r { border-bottom-left-radius: 0; }
 
 .jr-hover {
   background-color: #bcd5eb !important;
