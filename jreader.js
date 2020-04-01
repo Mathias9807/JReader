@@ -13,8 +13,8 @@ loadIndexes();
 
 async function loadIndexes() {
   console.log("Attempting to fetch dictionary and indexes from localstorage");
-  var localStorage = await browser.storage.sync.get([
-    "d_index", "k_index", "r_index", "uDict", "oDict"]);
+  var localStorage = await browser.storage.local.get(["d_index", "k_index", "r_index"]);
+  var syncStorage = await browser.storage.sync.get(["uDict", "oDict"]);
   d_index = localStorage["d_index"];
   // Key-value from: Kanji reading of word -> array of indices in dict
   k_index = localStorage["k_index"];
@@ -23,13 +23,13 @@ async function loadIndexes() {
 
   // Fetch user dictionary
   uDict = new Set();
-  var uDictStorage = localStorage["uDict"];
+  var uDictStorage = syncStorage["uDict"];
   if ($.isArray(uDictStorage) && uDictStorage.length > 0)
     uDict = new Set(uDictStorage);
 
   // Fetch unknown words dictionary
   oDict = new Set();
-  var oDictStorage = localStorage["oDict"];
+  var oDictStorage = syncStorage["oDict"];
   if ($.isArray(oDictStorage) && oDictStorage.length > 0)
     oDict = new Set(oDictStorage);
 
@@ -87,9 +87,9 @@ async function loadDict() {
   // Store the indexes
   console.log("Saving the indexes");
   try {
-    await browser.storage.sync.set({"d_index": d_index});
-    await browser.storage.sync.set({"k_index": k_index});
-    await browser.storage.sync.set({"r_index": r_index});
+    await browser.storage.local.set({"d_index": d_index});
+    await browser.storage.local.set({"k_index": k_index});
+    await browser.storage.local.set({"r_index": r_index});
   }catch (e) {
   }
 
