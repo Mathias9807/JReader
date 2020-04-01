@@ -1,6 +1,6 @@
-var content = document.body;
-
-var text = content.textContent;
+var content = null;
+var text = "";
+var searchingForDiv = true;
 
 var forcedBreaks = [];
 var breaks = [];
@@ -10,27 +10,30 @@ var searchMaxLen = 7;
 var d_index, k_index, r_index, uDict, oDict;
 
 loadIndexes();
-parsePage();
 
 async function loadIndexes() {
   console.log("Attempting to fetch dictionary and indexes from localstorage");
-  d_index = await browser.storage.local.get("d_index");
+  var localStorage = await browser.storage.local.get([
+    "d_index", "k_index", "r_index", "uDict", "oDict"]);
+  d_index = localStorage["d_index"];
   // Key-value from: Kanji reading of word -> array of indices in dict
-  k_index = await browser.storage.local.get("k_index");
+  k_index = localStorage["k_index"];
   // Key-value from: Kana reading of word -> array of indices in dict
-  r_index = await browser.storage.local.get("r_index");
+  r_index = localStorage["r_index"];
 
   // Fetch user dictionary
   uDict = new Set();
-  var uDictStorage = await browser.storage.local.get("uDict");
-  if ($.isArray(uDictStorage))
+  var uDictStorage = localStorage["uDict"];
+  if ($.isArray(uDictStorage) && uDictStorage.length>0)
     uDict = new Set(uDictStorage);
 
   // Fetch unknown words dictionary
   oDict = new Set();
-  var oDictStorage = await browser.storage.local.get("oDict");
-  if ($.isArray(oDictStorage))
+  var oDictStorage = localStorage["oDict"];
+  if ($.isArray(oDictStorage) && oDictStorage.length>0)
     oDict = new Set(oDictStorage);
+
+  await loadDict();
 }
 
 // Load dict and the indices, from localstorage if there
@@ -94,14 +97,41 @@ async function loadDict() {
   dict = null;
 }
 
+// Highlight the hovered element (For selecting content)
+prevElement = null;
+function highlightHover(e) {
+  var elem = e.target || e.srcElement;
+  if (prevElement!= null) {prevElement.classList.remove("jr-hover");}
+  elem.classList.add("jr-hover");
+  prevElement = elem;
+}
+document.body.addEventListener('mousemove', highlightHover, false);
+
+async function selectContent(e) {
+  var elem = e.target || e.srcElement;
+  if (prevElement!= null) {prevElement.classList.remove("jr-hover");}
+  content = elem;
+  searchingForDiv = false;
+  document.body.removeEventListener("mousemove", highlightHover);
+  document.body.removeEventListener("click", selectContent);
+  if (prevElement!= null) {prevElement.classList.remove("jr-hover");}
+  await parsePage();
+}
+document.body.addEventListener('click', selectContent, false);
+
 async function parsePage() {
-  await loadDict();
+  if (!content) {
+    console.log("parsePage() called without content set");
+    return;
+  }
+
+  text = content.textContent;
 
   // Try to find all the words in the text
   console.log("Parsing page for word breaks");
   findBreaks();
 
-  // clearMarking(content);
+  content.addEventListener('click', textClicked, false);
 }
 
 // Find word breaks in text
@@ -334,7 +364,6 @@ async function textClicked(e) {
   var textNode = sel.focusNode;
   var offset = sel.focusOffset;
   var globalOffs = flatIndex(content, textNode, offset);
-  // console.log("click", offset, globalOffs);
 
   // If the user Ctrl clicked a word, add it to the unknown word dictionary
   if (e.ctrlKey) {
@@ -405,7 +434,6 @@ async function textClicked(e) {
   clearMarking(content);
   findBreaks();
 }
-content.addEventListener('click', textClicked, false);
 
 function flatIndex(pNode, target, index) {
   // Find the position in the text of 'index' relative to the parent node
