@@ -1,6 +1,6 @@
 var content = null;
 var text = "";
-var searchingForDiv = true;
+var searchingForDiv = false;
 
 var forcedBreaks = [];
 var breaks = [];
@@ -24,13 +24,13 @@ async function loadIndexes() {
   // Fetch user dictionary
   uDict = new Set();
   var uDictStorage = localStorage["uDict"];
-  if ($.isArray(uDictStorage) && uDictStorage.length>0)
+  if ($.isArray(uDictStorage) && uDictStorage.length > 0)
     uDict = new Set(uDictStorage);
 
   // Fetch unknown words dictionary
   oDict = new Set();
   var oDictStorage = localStorage["oDict"];
-  if ($.isArray(oDictStorage) && oDictStorage.length>0)
+  if ($.isArray(oDictStorage) && oDictStorage.length > 0)
     oDict = new Set(oDictStorage);
 
   await loadDict();
@@ -105,7 +105,6 @@ function highlightHover(e) {
   elem.classList.add("jr-hover");
   prevElement = elem;
 }
-document.body.addEventListener('mousemove', highlightHover, false);
 
 async function selectContent(e) {
   var elem = e.target || e.srcElement;
@@ -117,7 +116,6 @@ async function selectContent(e) {
   if (prevElement!= null) {prevElement.classList.remove("jr-hover");}
   await parsePage();
 }
-document.body.addEventListener('click', selectContent, false);
 
 async function parsePage() {
   if (!content) {
@@ -184,6 +182,17 @@ async function addAllMarkedWords() {
 }
 document.addEventListener('keyup', e => {
   if (e.ctrlKey && !e.shiftKey && e.keyCode == 90) addAllMarkedWords();
+  // Search for new paragraph when Ctrl-Shift-Z is pressed
+  if (e.ctrlKey && e.shiftKey && e.keyCode == 90) {
+    if (content) {
+      searchingForDiv = true;
+      clearMarking(content);
+      content = null;
+    }else {
+      document.body.addEventListener('mousemove', highlightHover, false);
+      document.body.addEventListener('click', selectContent, false);
+    }
+  }
 }, false);
 
 function getWordAt(from) {
