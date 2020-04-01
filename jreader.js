@@ -13,7 +13,7 @@ loadIndexes();
 
 async function loadIndexes() {
   console.log("Attempting to fetch dictionary and indexes from localstorage");
-  var localStorage = await browser.storage.local.get([
+  var localStorage = await browser.storage.sync.get([
     "d_index", "k_index", "r_index", "uDict", "oDict"]);
   d_index = localStorage["d_index"];
   // Key-value from: Kanji reading of word -> array of indices in dict
@@ -87,9 +87,9 @@ async function loadDict() {
   // Store the indexes
   console.log("Saving the indexes");
   try {
-    await browser.storage.local.set({"d_index": d_index});
-    await browser.storage.local.set({"k_index": k_index});
-    await browser.storage.local.set({"r_index": r_index});
+    await browser.storage.sync.set({"d_index": d_index});
+    await browser.storage.sync.set({"k_index": k_index});
+    await browser.storage.sync.set({"r_index": r_index});
   }catch (e) {
   }
 
@@ -173,7 +173,7 @@ async function addAllMarkedWords() {
     if (oDict.has(dIndex) == false)
       uDict.add(dIndex);
   }
-  await browser.storage.local.set({"uDict": [...uDict]});
+  await browser.storage.sync.set({"uDict": [...uDict]});
   console.log("Added", uDict.size - nWordsPre, "words!");
 
   // Reflow words
@@ -402,7 +402,7 @@ async function textClicked(e) {
       }
     }
 
-    await browser.storage.local.set({"oDict": [...oDict]});
+    await browser.storage.sync.set({"oDict": [...oDict]});
 
   // If the user clicked a break
   // Toggle between adding it to uDict and removing it
@@ -424,7 +424,7 @@ async function textClicked(e) {
       console.log("Add", word, "("+base+")", "to uDict");
     }
 
-    await browser.storage.local.set({"uDict": [...uDict]});
+    await browser.storage.sync.set({"uDict": [...uDict]});
 
   }else {
     // Otherwise, add this point as a forced break
