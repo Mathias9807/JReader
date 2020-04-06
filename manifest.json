@@ -33,5 +33,14 @@
 
   "web_accessible_resources": [
     "JMdict_e.json"
-  ]
+  ],
+
+  "browser_action": {
+    "default_icon": {
+      "48": "icons/jreader-48.png",
+      "128": "icons/jreader-128.png"
+    },
+    "default_popup": "page.html",
+    "browser_style": true
+  }
 }

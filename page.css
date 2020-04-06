@@ -1,0 +1,53 @@
+body {
+	box-sizing: border-box;
+	width: 30em;
+}
+
+header {
+	background: #226;
+	color: #FFF;
+	padding: 8px;
+	font-size: 16pt;
+}
+
+section {
+	padding: 12px;
+	padding-top: 0;
+	font-size: 12pt;
+}
+
+h1 {
+	font-size: 16pt;
+}
+
+#inputs {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+#buttons {
+	display: flex;
+	flex-direction: column;
+}
+#text {
+	width: auto;
+}
+#import {
+	background: #EEE;
+	border: 1px solid #AAA;
+	border-radius: 4px;
+	display: inline;
+	padding: 3px;
+	margin: 3px;
+}
+#import:active { background: #AAA; }
+#export {
+	background: #EEE;
+	border: 1px solid #AAA;
+	border-radius: 4px;
+	display: inline;
+	padding: 3px;
+	margin: 3px;
+}
+#export:active { background: #AAA; }
+
