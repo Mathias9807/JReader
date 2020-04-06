@@ -25,7 +25,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["jquery-3.4.1.min.js", "jreader.js"],
+      "js": ["jquery-3.4.1.min.js", "store.js", "jreader.js"],
       "css": ["jreader.css"],
       "run_at": "document_end"
     }

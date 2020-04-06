@@ -7,31 +7,20 @@ var breaks = [];
 var words = [];
 var searchMaxLen = 7;
 
-var d_index, k_index, r_index, uDict, oDict;
+var d_index, k_index, r_index;
 
 loadIndexes();
 
 async function loadIndexes() {
   console.log("Attempting to fetch dictionary and indexes from localstorage");
   var localStorage = await browser.storage.local.get(["d_index", "k_index", "r_index"]);
-  var syncStorage = await browser.storage.sync.get(["uDict", "oDict"]);
   d_index = localStorage["d_index"];
   // Key-value from: Kanji reading of word -> array of indices in dict
   k_index = localStorage["k_index"];
   // Key-value from: Kana reading of word -> array of indices in dict
   r_index = localStorage["r_index"];
 
-  // Fetch user dictionary
-  uDict = new Set();
-  var uDictStorage = syncStorage["uDict"];
-  if ($.isArray(uDictStorage) && uDictStorage.length > 0)
-    uDict = new Set(uDictStorage);
-
-  // Fetch unknown words dictionary
-  oDict = new Set();
-  var oDictStorage = syncStorage["oDict"];
-  if ($.isArray(oDictStorage) && oDictStorage.length > 0)
-    oDict = new Set(oDictStorage);
+  await loadUserDicts();
 
   await loadDict();
 }
@@ -80,7 +69,7 @@ async function loadDict() {
       else
         r_index[reb].push(i);
     }
- }
+  }
 
   console.log("Indexed dictionary");
 
@@ -176,7 +165,7 @@ async function addAllMarkedWords() {
     if (oDict.has(dIndex) == false)
       uDict.add(dIndex);
   }
-  await browser.storage.sync.set({"uDict": [...uDict]});
+  writeUDict();
   console.log("Added", uDict.size - nWordsPre, "words!");
 
   // Reflow words
@@ -184,9 +173,9 @@ async function addAllMarkedWords() {
   findBreaks();
 }
 document.addEventListener('keyup', e => {
-  if (e.ctrlKey && !e.shiftKey && e.keyCode == 90) addAllMarkedWords();
+  if (e.altKey && !e.shiftKey && e.keyCode == 90) addAllMarkedWords();
   // Search for new paragraph when Ctrl-Shift-Z is pressed
-  if (e.ctrlKey && e.shiftKey && e.keyCode == 90) {
+  if (e.altKey && e.shiftKey && e.keyCode == 90) {
     if (content) {
       searchingForDiv = true;
       clearMarking(content);
@@ -366,6 +355,7 @@ function dictIndex(word) {
 }
 
 async function textClicked(e) {
+  e.stopPropagation();
   let range;
 
   // User clicked, toggle a forced break on this word and add it to the users dict
@@ -407,7 +397,7 @@ async function textClicked(e) {
       }
     }
 
-    await browser.storage.sync.set({"oDict": [...oDict]});
+    writeODict();
 
   // If the user clicked a break
   // Toggle between adding it to uDict and removing it
@@ -429,7 +419,7 @@ async function textClicked(e) {
       console.log("Add", word, "("+base+")", "to uDict");
     }
 
-    await browser.storage.sync.set({"uDict": [...uDict]});
+    writeUDict();
 
   }else {
     // Otherwise, add this point as a forced break
@@ -554,5 +544,4 @@ function clearMarking(node) {
   $(node).find(".jr-hl").contents().unwrap();
   node.normalize();
 }
-// markText(content.childNodes[0], 10, 3);
 
