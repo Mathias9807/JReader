@@ -50,4 +50,15 @@ h1 {
 	margin: 3px;
 }
 #export:active { background: #AAA; }
+#horiz { display: flex; justify-content: center; }
+#delete {
+	background: #C22;
+	color: #FFF;
+	border: 1px solid #AAA;
+	border-radius: 4px;
+	display: inline;
+	padding: 4px;
+	margin: 3px;
+}
+#delete:active { background: #AAA; }
 

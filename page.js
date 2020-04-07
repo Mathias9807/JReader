@@ -31,6 +31,15 @@ function exportJSON() {
 }
 $("#export").click(exportJSON);
 
+function deleteDicts() {
+  exportJSON();
+  uDict = new Set();
+  oDict = new Set();
+  writeUDict();
+  writeODict();
+}
+$("#delete").click(deleteDicts);
+
 async function init() {
   await loadUserDicts();
 
