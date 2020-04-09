@@ -1,5 +1,33 @@
 var uDict, oDict;
 
+browser.runtime.sendMessage({request: 'isActive'}).then(active => {
+  if (active) {
+    $("#on").addClass('currentButton');
+    init();
+  }else
+    $("#off").addClass('currentButton');
+});
+
+async function on() {
+  $("#off").removeClass('currentButton');
+  $("#on").addClass('currentButton');
+  active = await browser.runtime.sendMessage({request: 'isActive'});
+  if (!active) {
+    await browser.runtime.sendMessage({request: 'start'});
+    init();
+  }
+}
+$("#on").click(on);
+
+async function off() {
+  $("#off").addClass('currentButton');
+  $("#on").removeClass('currentButton');
+  active = await browser.runtime.sendMessage({request: 'isActive'});
+  if (active)
+    await browser.runtime.sendMessage({request: 'stop'});
+}
+$("#off").click(off);
+
 function importJSON(e) {
   var jsonValue = JSON.parse($('#text').val());
 
@@ -48,7 +76,6 @@ async function init() {
   $("#known-words").html([...uDict].length + " words");
   writeJapNumber();
 }
-init();
 
 async function writeUDict() {
   return browser.runtime.sendMessage({request: 'writeUDict', dict: [...uDict]}); }

@@ -3,6 +3,7 @@
  * Loads the dictionary indexes and user dictionaries when the plugin is started.
  */
 
+var active = false;
 var d_index, k_index, r_index;
 var searchMaxLen = 7;
 
@@ -13,6 +14,20 @@ function onMessage(data, sender, response) {
     return;
   }
   switch (data.request) {
+    case "start": {
+      active = true;
+      loadIndexes();
+      return;
+    }
+    case "stop": {
+      active = false;
+      d_index = k_index = r_index = null;
+      return;
+    }
+    case "isActive": {
+      response(active);
+      return;
+    }
     case "findBreaks": {
       response(findBreaks(data.text, data.forcedBreaks));
       return;
@@ -149,7 +164,6 @@ async function loadIndexes() {
 
   await loadDict();
 }
-loadIndexes();
 
 // Load dict and the indices, from localstorage if there
 async function loadDict() {
