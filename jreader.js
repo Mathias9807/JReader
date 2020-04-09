@@ -59,6 +59,9 @@ async function findBreaks() {
   uWords = result.uWords;
   oWords = result.oWords;
 
+  // Clear previous tags
+  clearMarking(content);
+
   console.log("Matching words against user dictionary...");
   uNodes = [];
   oNodes = [];
@@ -73,26 +76,22 @@ async function findBreaks() {
 }
 
 async function reHighlightText(firstChange=0) {
-  clearMarking(content, firstChange);
-  console.log("clearMarking() done");
-
   var marks = await browser.runtime.sendMessage({request: 'findMarkings',
     words: words, firstChange: firstChange, uWordsOld: uWords, oWordsOld: oWords});
   uWords = marks.uWords;
   oWords = marks.oWords;
   console.log(marks);
-  console.log("findMarkings() done");
+
+  clearMarking(content, firstChange);
 
   for (var i of marks.uWords) {
     if (i < firstChange) continue;
     uNodes.push(markText(content.childNodes[0], breaks[i], words[i].length));
   }
-  console.log("mark uWords done");
   for (var i of marks.oWords) {
     if (i < firstChange) continue;
     oNodes.push(hlText(content.childNodes[0], breaks[i], words[i].length));
   }
-  console.log("mark oWords done");
 }
 
 async function addAllMarkedWords() {
@@ -106,7 +105,6 @@ async function addAllMarkedWords() {
   console.log("Added", uDict.size - nWordsPre, "words!");
 
   // Reflow words
-  clearMarking(content);
   findBreaks();
 }
 document.addEventListener('keyup', e => {
@@ -162,7 +160,6 @@ async function textClicked(e) {
       console.log("Add force break at", globalOffs);
 
       // Reflow words with the new break
-      clearMarking(content);
       await findBreaks();
     }
 
@@ -206,6 +203,8 @@ async function textClicked(e) {
       oDict.delete(dIndex);
       await browser.runtime.sendMessage({request: 'removeOWord', index: dIndex});
       console.log("Add", word, "("+base+")", "to uDict");
+      // clearMarkingWord(modifiedIndex);  // Clear this word only
+      // modifiedIndex = words.length;     // avoids having to reprocess the text
     }
 
     await writeUDict();
@@ -218,17 +217,12 @@ async function textClicked(e) {
     forcedBreaks.sort((a, b) => a - b);
 
     // Reflow words with the new break
-    clearMarking(content);
     await findBreaks();
   }
 
-  // Toggle a forced break on the clicked word
-  // if (forcedBreaks.includes(globalOffs))
-  //   forcedBreaks = forcedBreaks.filter(e => e !== globalOffs);
-  // else forcedBreaks.push(globalOffs);
-
   // Rehighlight every word in case the user dicts were changed
-  reHighlightText(modifiedIndex);
+  if (modifiedIndex < words.length)
+    reHighlightText(modifiedIndex);
 }
 
 function flatIndex(pNode, target, index) {
@@ -318,7 +312,7 @@ function addHl(node, start, len, className) {
 			// If so, highlight every node in list and return
       hlNode = addHlSpan(textNodes[0], className);
       $(hlNode).addClass("jr-l"); // Also remove right border-radius
-      var addedNodes = [hlNodes];
+      var addedNodes = [hlNode];
       for (var i = 1; i < textNodes.length; i++) {
         hlNode = addHlSpan(textNodes[i], className);
         // Remove border-radius on both sides
@@ -350,5 +344,8 @@ function clearMarking(node, fromIndex) {
     $(node).find(".jr-hl").contents().unwrap();
   }
   node.normalize();
+}
+function clearMarkingWord(index) {
+    $(uNodes[index]).contents().unwrap();
 }
 
