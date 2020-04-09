@@ -1,3 +1,5 @@
+var uDict, oDict;
+
 function importJSON(e) {
   var jsonValue = JSON.parse($('#text').val());
 
@@ -41,9 +43,15 @@ function deleteDicts() {
 $("#delete").click(deleteDicts);
 
 async function init() {
-  await loadUserDicts();
+  uDict = await browser.runtime.sendMessage({request: 'getUDict'});
+  oDict = await browser.runtime.sendMessage({request: 'getODict'});
 
   $("#known-words").html([...uDict].length + " words");
 }
 init();
+
+async function writeUDict() {
+  return browser.runtime.sendMessage({request: 'writeUDict', dict: [...uDict]}); }
+async function writeODict() {
+  return browser.runtime.sendMessage({request: 'writeODict', dict: [...oDict]}); }
 
