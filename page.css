@@ -50,7 +50,9 @@ h1 {
 	margin: 3px;
 }
 #export:active { background: #AAA; }
-#horiz { display: flex; justify-content: center; }
+.center { display: flex; justify-content: center; }
+.horiz { display: flex; flex-direction: row; }
+.vert { display: flex; flex-direction: column; flex-grow: 1; }
 #delete {
 	background: #C22;
 	color: #FFF;
@@ -61,4 +63,15 @@ h1 {
 	margin: 3px;
 }
 #delete:active { background: #AAA; }
+#jap {
+	display: flex;
+	flex-basis: 1.5em;
+	writing-mode: vertical-rl;
+  text-orientation: upright;
+	padding-top: 1em;
+	align-items: center;
+	text-align: center;
+	color: #AAA;
+	font-size: 16pt;
+}
 
