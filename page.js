@@ -73,6 +73,7 @@ async function init() {
   uDict = await browser.runtime.sendMessage({request: 'getUDict'});
   oDict = await browser.runtime.sendMessage({request: 'getODict'});
 
+  if (!uDict || !oDict) return;
   $("#known-words").html([...uDict].length + " words");
   writeJapNumber();
 }

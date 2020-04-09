@@ -22,6 +22,7 @@ async function selectContent(e) {
   var elem = e.target || e.srcElement;
   if (prevElement!= null) {prevElement.classList.remove("jr-hover");}
   content = elem;
+  clearMarking(content);
   searchingForDiv = false;
   forcedBreaks = [];
   document.body.removeEventListener("mousemove", highlightHover);

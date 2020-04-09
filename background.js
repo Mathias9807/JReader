@@ -7,6 +7,8 @@ var active = false;
 var d_index, k_index, r_index;
 var searchMaxLen = 7;
 
+loadUserDicts();
+
 browser.runtime.onMessage.addListener(onMessage);
 function onMessage(data, sender, response) {
   if (!data["request"]) {
@@ -15,11 +17,13 @@ function onMessage(data, sender, response) {
   }
   switch (data.request) {
     case "start": {
+      if (active) return;
       active = true;
       loadIndexes();
       return;
     }
     case "stop": {
+      if (!active) return;
       active = false;
       d_index = k_index = r_index = null;
       return;
@@ -159,8 +163,6 @@ async function loadIndexes() {
   k_index = localStorage["k_index"];
   // Key-value from: Kana reading of word -> array of indices in dict
   r_index = localStorage["r_index"];
-
-  await loadUserDicts();
 
   await loadDict();
 }
