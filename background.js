@@ -66,6 +66,13 @@ function onMessage(data, sender, response) {
       writeODict();
       return;
     }
+    case "dropAll": {
+      uDict.clear();
+      oDict.clear();
+      writeUDict();
+      writeODict();
+      return;
+    }
     default: {
       console.log("No handler for command", data.request);
     }

@@ -35,10 +35,8 @@ $("#export").click(exportJSON);
 
 function deleteDicts() {
   exportJSON();
-  uDict = new Set();
-  oDict = new Set();
-  writeUDict();
-  writeODict();
+
+  browser.runtime.sendMessage({request: 'dropAll'});
 }
 $("#delete").click(deleteDicts);
 
