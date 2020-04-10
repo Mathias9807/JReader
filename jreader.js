@@ -119,6 +119,7 @@ document.addEventListener('keyup', e => {
       content.removeEventListener('click', textClicked);
       content = null;
     }else {
+      browser.runtime.sendMessage({request: 'start'});
       document.body.addEventListener('mousemove', highlightHover, false);
       document.body.addEventListener('click', selectContent, false);
     }
