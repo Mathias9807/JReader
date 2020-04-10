@@ -157,7 +157,7 @@ async function textClicked(e) {
   modifiedIndex = Math.max(0, modifiedIndex);
 
   // If the user Ctrl clicked a word, add it to the unknown word dictionary
-  if (e.ctrlKey) {
+  if (e.altKey) {
     // If this is in the middle of a word, add a forced break and make the word yellow
     if (breaks.includes(globalOffs) == false
           && forcedBreaks.includes(globalOffs) == false) {
