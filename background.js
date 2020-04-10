@@ -237,7 +237,7 @@ function isWord(word) {
 
   // Check for negative form
   var negative = word.replace(/ないで$/, 'ない').replace(/なくても$/, 'ない')
-                  .replace(/なくて$/, 'ない');
+                  .replace(/なくて$/, 'ない').replace(/なければ$/, 'ない');
   if (negative.match(/ない$/)) {
     var base = negative.replace(/らない$/, 'る').replace(/わない$/, 'う')
                 .replace(/たない$/, 'つ').replace(/かない$/, 'く')
@@ -246,6 +246,23 @@ function isWord(word) {
                 .replace(/さない$/, 'す').replace(/ない$/, 'る');
 
     if (inDict(base)) return base;
+  }
+
+  // Check for ば-conditional form
+  if (word.charAt(word.length - 1) == 'ば') {
+    var nWord = word.substring(0, word.length - 2);
+    switch (word.charAt(word.length - 2)) {
+      case 'え': nWord += 'う'; break;
+      case 'て': nWord += 'つ'; break;
+      case 'れ': nWord += 'る'; break;
+      case 'け': nWord += 'く'; break;
+      case 'げ': nWord += 'ぐ'; break;
+      case 'め': nWord += 'む'; break;
+      case 'ね': nWord += 'ぬ'; break;
+      case 'べ': nWord += 'ぶ'; break;
+      case 'せ': nWord += 'す'; break;
+    }
+    if (inDict(nWord)) return nWord;
   }
 
   // Is it て-form of a verb?
