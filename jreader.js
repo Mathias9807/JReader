@@ -81,7 +81,6 @@ async function reHighlightText(firstChange=0) {
     words: words, firstChange: firstChange, uWordsOld: uWords, oWordsOld: oWords});
   uWords = marks.uWords;
   oWords = marks.oWords;
-  console.log(marks);
 
   clearMarking(content, firstChange);
 
@@ -150,7 +149,9 @@ async function textClicked(e) {
   var offset = sel.focusOffset;
   var globalOffs = flatIndex(content, textNode, offset);
   var modifiedIndex = words.length; // Index of first changed word
-  modifiedIndex = Math.min(breaks.indexOf(globalOffs), modifiedIndex);
+  // Clear from a couple words before the clicked word, ensure we reflow correctly
+  modifiedIndex = Math.min(breaks.indexOf(globalOffs)-9, modifiedIndex);
+  modifiedIndex = Math.max(0, modifiedIndex);
 
   // If the user Ctrl clicked a word, add it to the unknown word dictionary
   if (e.ctrlKey) {
@@ -198,6 +199,7 @@ async function textClicked(e) {
       // Remove the forced break here if there is one
       forcedBreaks = forcedBreaks.filter(e => e !== globalOffs);
       console.log("Filter force break at", word, "("+base+")");
+      findBreaks();
 
     }else {
       uDict.add(dIndex);
