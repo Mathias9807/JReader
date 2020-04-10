@@ -289,7 +289,8 @@ function isWord(word) {
   if (out = inDict(deConjugateEnding(word, 'して', 'す')))  return out;
 
   // Is it past-tense of a verb?
-  var tari = word.replace(/たり$/, 'た').replace(/だり$/, 'だ');
+  var tari = word.replace(/たら$/, 'た').replace(/たり$/, 'た')
+          .replace(/だり$/, 'だ');
   if (out = inDict(deConjugateEnding(tari, 'た',   'る')))  return out;
   if (out = inDict(deConjugateEnding(tari, 'った', 'う')))  return out;
   if (out = inDict(deConjugateEnding(tari, 'った', 'つ')))  return out;
