@@ -246,8 +246,9 @@ function isWord(word) {
   if (out = inDict(word)) return out;
 
   // Check for negative form
-  var negative = word.replace(/ないで$/, 'ない').replace(/なくても$/, 'ない')
-                  .replace(/なくて$/, 'ない').replace(/なければ$/, 'ない');
+  var negative = word.replace(/なく$/, 'ない').replace(/ないで$/, 'ない')
+          .replace(/なくても$/, 'ない').replace(/なくて$/, 'ない')
+          .replace(/なければ$/, 'ない');
   if (negative.match(/ない$/)) {
     var base = negative.replace(/らない$/, 'る').replace(/わない$/, 'う')
                 .replace(/たない$/, 'つ').replace(/かない$/, 'く')
