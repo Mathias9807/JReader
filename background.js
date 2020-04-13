@@ -117,7 +117,7 @@ async function findBreaks(text, forcedBreaks) {
     // Handle single character particles ruining the next word
     // If the character after this one gives a longer or equal length word as
     // this one then this character might just be a particle
-    if ('はがをでにやもと'.includes(text[i])) {
+    if ('はがをでにやもとの'.includes(text[i])) {
       var nextWord = findLongestWord(
         text.substring(i+1, i + Math.min(nextBreak - i, searchMaxLen)));
       if (nextWord && nextWord.length >= subText.length)
