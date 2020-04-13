@@ -102,6 +102,7 @@ function onMessage(data, sender, response) {
 async function findBreaks(text, forcedBreaks) {
   var breaks = [];
   var words = [];
+  var indices = [];
 
   // Try to find all the words in the text
   console.log("Searching page for words");
@@ -126,12 +127,14 @@ async function findBreaks(text, forcedBreaks) {
 
     breaks.push(i);
     words.push(subText);
+    indices.push(dictIndex(subText));
     i += subText.length - 1;
   }
 
   var marks = await findMarkings(words);
 
-  return { words: words, breaks: breaks, uWords: marks.uWords, oWords: marks.oWords }
+  return { words: words, indices: indices, breaks: breaks,
+    uWords: marks.uWords, oWords: marks.oWords }
 }
 
 // Find what words are in uDict and oDict
@@ -195,7 +198,7 @@ async function loadDict() {
   for (var i = 0; i < dict.length; i++) {
     d_index[i] = dict[i].ent_seq[0];
   }
-  
+
   // Create indexes for the kanji and kana values
   k_index = {};
   r_index = {};

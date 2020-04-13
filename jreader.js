@@ -5,6 +5,7 @@ var searchingForDiv = false;
 var forcedBreaks = [];
 var breaks = [];
 var words = [];
+var indices = [];
 
 var uDict, oDict, uWords, oWords;
 var uNodes = [], oNodes = [];
@@ -30,6 +31,8 @@ async function selectContent(e) {
   document.body.removeEventListener("mousemove", highlightHover);
   document.body.removeEventListener("click", selectContent);
   if (prevElement!= null) {prevElement.classList.remove("jr-hover");}
+
+  addTooltip(content);
 
   uDict = await browser.runtime.sendMessage({request: 'getUDict'});
   oDict = await browser.runtime.sendMessage({request: 'getODict'});
@@ -58,12 +61,14 @@ async function findBreaks() {
   var result = await browser.runtime.sendMessage({request: 'findBreaks',
     text: text, forcedBreaks: forcedBreaks});
   words = result.words;
+  indices = result.indices;
   breaks = result.breaks;
   uWords = result.uWords;
   oWords = result.oWords;
 
   // Clear previous tags
   clearMarking(content);
+  updateTooltip();
 
   console.log("Matching words against user dictionary...");
   uNodes = [];
@@ -117,6 +122,7 @@ document.addEventListener('keyup', e => {
     if (content) {
       searchingForDiv = true;
       clearMarking(content);
+      clearTooltip();
       content.removeEventListener('click', textClicked);
       content = null;
     }else {
@@ -230,6 +236,7 @@ async function textClicked(e) {
   // Rehighlight every word in case the user dicts were changed
   if (modifiedIndex < words.length)
     reHighlightText(modifiedIndex);
+  updateTooltip();
 }
 
 function flatIndex(pNode, target, index) {
@@ -354,5 +361,27 @@ function clearMarking(node, fromIndex) {
 }
 function clearMarkingWord(index) {
     $(uNodes[index]).contents().unwrap();
+}
+
+// Add word percentage tooltip to node
+function addTooltip(node) {
+  clearTooltip();
+  $(node).append('<span id="jr-tooltip"><span>?%</span> <span>?%</span></span>');
+  $(node).addClass('jr-ttParent');
+}
+function updateTooltip() {
+  var tooltip = document.getElementById('jr-tooltip');
+  if (tooltip) {
+    // Get all unique words in this text - uDict and oDict
+    var w = new Set([...indices]);
+    var wMinusU = new Set([...w].filter(word => uDict.has(word) == false));
+    var wMinusO = new Set([...w].filter(word => oDict.has(word) == true));
+    tooltip.childNodes[0].textContent = Math.round(100*wMinusU.size/w.size) + '%';
+    tooltip.childNodes[2].textContent = Math.round(100*wMinusO.size/w.size) + '%';
+  }
+}
+function clearTooltip() {
+  $('#jr-tooltip').remove();
+  $('.jr-ttParent').removeClass('jr-ttParent');
 }
 

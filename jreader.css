@@ -10,3 +10,19 @@
   background-color: #bcd5eb !important;
   outline: 2px solid #5166bb !important;
 }
+
+#jr-tooltip {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 11px;
+  background: #EEE;
+  color: #88D;
+  padding: 0 5px;
+  border-bottom-left-radius: 8px;
+  border: 1px solid #CCC;
+}
+#jr-tooltip > span:last-child {
+  color: #FF7C0F;
+}
+.jr-ttParent { position: relative; }

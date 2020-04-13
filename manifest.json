@@ -3,9 +3,9 @@
   "name": "JReader",
   "version": "0.2",
   "author": "Mathias Johansson",
-  
+
   "description": "Japanese reader for tracking known words",
-  
+
   "applications": {
     "gecko": {
       "id": "mathias9807@gmail.com",
