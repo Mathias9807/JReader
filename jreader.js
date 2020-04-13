@@ -375,6 +375,11 @@ function clearMarkingWord(index) {
 // Add word percentage tooltip to node
 function addTooltip(node) {
   clearTooltip();
+
+  // Check if overflow: hidden on node, if so then floatMessages will get cut-off
+  // Anchor the tooltip to the first parent without overflow: hidden
+  while ($(node).css('overflow') == 'hidden') node = node.parentNode;
+
   $(node).append('<span id="jr-tooltip"><span>?%</span> <span>?%</span></span>');
   $(node).addClass('jr-ttParent');
 }
