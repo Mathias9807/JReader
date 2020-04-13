@@ -251,7 +251,8 @@ function isWord(word) {
   // Check for negative form
   var negative = word.replace(/なく$/, 'ない').replace(/ないで$/, 'ない')
           .replace(/なくても$/, 'ない').replace(/なくて$/, 'ない')
-          .replace(/なければ$/, 'ない');
+          .replace(/なければ$/, 'ない').replace(/なかった$/, 'ない')
+          .replace(/なかったら$/, 'ない');
   if (negative.match(/ない$/)) {
     var base = negative.replace(/らない$/, 'る').replace(/わない$/, 'う')
                 .replace(/たない$/, 'つ').replace(/かない$/, 'く')
