@@ -109,7 +109,11 @@ async function addAllMarkedWords() {
       uDict.add(dIndex);
   }
   writeUDict();
-  console.log("Added", uDict.size - nWordsPre, "words!");
+
+  var newWords = uDict.size - nWordsPre;
+  console.log("Added", newWords, "words!");
+
+  floatMessage("Added " + newWords + " word" + (newWords==1 ? '' : 's'));
 
   // Reflow words
   findBreaks();
@@ -388,5 +392,15 @@ function updateTooltip() {
 function clearTooltip() {
   $('#jr-tooltip').remove();
   $('.jr-ttParent').removeClass('jr-ttParent');
+}
+function floatMessage(msg) {
+  var tooltip = document.getElementById('jr-tooltip');
+  if (!tooltip) return;
+
+  // $(tooltip).after('<span class="floatAway">' + msg + '</span>');
+  var floatAway = $('<span class="floatAway">' + msg + '</span>').insertAfter(tooltip);
+  floatAway.on('animationend', function() {
+    floatAway.remove();
+  });
 }
 

@@ -13,7 +13,7 @@
 
 #jr-tooltip {
   position: absolute;
-  top: 0;
+  top: -1em;
   right: 0;
   font-size: 11px;
   background: #EEE;
@@ -21,8 +21,26 @@
   padding: 0 5px;
   border-bottom-left-radius: 8px;
   border: 1px solid #CCC;
+  z-index: 10;
 }
 #jr-tooltip > span:last-child {
   color: #FF7C0F;
 }
 .jr-ttParent { position: relative; }
+
+.floatAway {
+  position: absolute;
+  right: 0;
+  font-size: 11px;
+  animation-name: floatAway;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  z-index: 9;
+}
+
+@keyframes floatAway {
+  0%    { opacity: 0.0; top: -2em; }
+  15%    { opacity: 1.0; }
+  50%   { opacity: 1.0; }
+  100%  { opacity: 0.0; top: -4em; }
+}
