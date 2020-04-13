@@ -10,7 +10,7 @@ var indices = [];
 var uDict, oDict, uWords, oWords;
 var uNodes = [], oNodes = [];
 
-clearMarking(document.body);
+// clearMarking(document.body);
 
 // Highlight the hovered element (For selecting content)
 prevElement = null;
