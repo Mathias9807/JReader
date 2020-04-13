@@ -13,7 +13,7 @@
 
 #jr-tooltip {
   position: absolute;
-  top: 0;
+  top: -1em;
   right: 0;
   font-size: 11px;
   background: #EEE;
@@ -41,8 +41,8 @@
 }
 
 @keyframes floatAway {
-  0%    { opacity: 0.0; top: -1em; }
+  0%    { opacity: 0.0; top: -2em; }
   15%   { opacity: 1.0; }
   50%   { opacity: 1.0; }
-  100%  { opacity: 0.0; top: -3em; }
+  100%  { opacity: 0.0; top: -4em; }
 }
