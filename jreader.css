@@ -13,7 +13,7 @@
 
 #jr-tooltip {
   position: absolute;
-  top: -1em;
+  top: 0;
   right: 0;
   font-size: 11px;
   background: #EEE;
@@ -23,6 +23,7 @@
   border: 1px solid #CCC;
   z-index: 10;
 }
+#jr-tooltip:hover { opacity: 0; }
 #jr-tooltip > span:last-child {
   color: #FF7C0F;
 }
@@ -32,6 +33,7 @@
   position: absolute;
   right: 0;
   font-size: 11px;
+  color: #333;
   animation-name: floatAway;
   animation-duration: 1s;
   animation-timing-function: linear;
@@ -39,8 +41,8 @@
 }
 
 @keyframes floatAway {
-  0%    { opacity: 0.0; top: -2em; }
-  15%    { opacity: 1.0; }
+  0%    { opacity: 0.0; top: -1em; }
+  15%   { opacity: 1.0; }
   50%   { opacity: 1.0; }
-  100%  { opacity: 0.0; top: -4em; }
+  100%  { opacity: 0.0; top: -3em; }
 }
