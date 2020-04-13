@@ -131,6 +131,11 @@ document.addEventListener('keyup', e => {
       document.body.addEventListener('click', selectContent, false);
     }
   }
+  if (e.keyCode == 27) { // If escape is pressed, abort select operation
+    document.body.removeEventListener("mousemove", highlightHover);
+    document.body.removeEventListener("click", selectContent);
+    if (prevElement!= null) {prevElement.classList.remove("jr-hover");}
+  }
 }, false);
 
 function isWord(word) {
