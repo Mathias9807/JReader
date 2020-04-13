@@ -374,7 +374,7 @@ function updateTooltip() {
   if (tooltip) {
     // Get all unique words in this text - uDict and oDict
     var w = new Set([...indices]);
-    var wMinusU = new Set([...w].filter(word => uDict.has(word) == false));
+    var wMinusU = new Set([...w].filter(word => !uDict.has(word) && !oDict.has(word)));
     var wMinusO = new Set([...w].filter(word => oDict.has(word) == true));
     tooltip.childNodes[0].textContent = Math.round(100*wMinusU.size/w.size) + '%';
     tooltip.childNodes[2].textContent = Math.round(100*wMinusO.size/w.size) + '%';
