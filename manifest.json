@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "JReader",
-  "version": "0.1",
+  "version": "0.2",
   "author": "Mathias Johansson",
   
   "description": "Japanese reader for tracking known words",
@@ -27,7 +27,7 @@
       "matches": ["<all_urls>"],
       "js": ["jquery-3.4.1.min.js", "jreader.js"],
       "css": ["jreader.css"],
-      "run_at": "document_end"
+      "run_at": "document_idle"
     }
   ],
 

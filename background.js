@@ -315,7 +315,7 @@ function isWord(word) {
 
   // Is it polite form of something? (行きます、行きたい)
   // If so this will turn it into base form
-  polite = word.replace(/ます$/, '').replace(/ました$/, '')
+  polite = word.replace(/る$/, '').replace(/ます$/, '').replace(/ました$/, '')
               .replace(/ません$/, '').replace(/たい$/, '')
               .replace(/ましょう$/, '').replace(/そう$/, '');
 
@@ -330,6 +330,7 @@ function isWord(word) {
   if (out = inDict(deConjugateEnding(polite, 'に', 'ぬ'))) return out;
   if (out = inDict(deConjugateEnding(polite, 'び', 'ぶ'))) return out;
   if (out = inDict(deConjugateEnding(polite, 'し', 'す'))) return out;
+  if (inDict(polite)) return polite; // Check pure base form
 
   // Check い-adjectives
   if (out = inDict(deConjugateEnding(word, 'そう', 'い'))) return out;

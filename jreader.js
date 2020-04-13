@@ -109,6 +109,7 @@ async function addAllMarkedWords() {
   // Reflow words
   findBreaks();
 }
+
 document.addEventListener('keyup', e => {
   if (e.altKey && !e.shiftKey && e.keyCode == 90) addAllMarkedWords();
   // Search for new paragraph when Ctrl-Shift-Z is pressed
