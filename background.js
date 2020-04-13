@@ -339,8 +339,8 @@ function isWord(word) {
   if (out = inDict(deConjugateEnding(word, 'そう', 'い'))) return out;
   if (out = inDict(deConjugateEnding(word, 'く', 'い'))) return out;
   if (out = inDict(deConjugateEnding(word, 'くて', 'い'))) return out;
-  if (out = inDict(deConjugateEnding(word, 'かった', 'い')))
-    return out;
+  if (out = inDict(deConjugateEnding(word, 'さ', 'い'))) return out;
+  if (out = inDict(deConjugateEnding(word, 'かった', 'い'))) return out;
 
   return false;
 }
