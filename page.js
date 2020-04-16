@@ -92,14 +92,16 @@ function getDigit(digit, ones=true) {
 function writeJapNumber() {
   var number = [...uDict].length;
   var numberStr = '' + number;
+  var numLen = numberStr.length;
 
   var str = '語';
-  if (numberStr.length >= 1) str = getDigit(number) + str;
-  if (numberStr.length >= 2) str = getDigit(number/10, false) + '十' + str;
-  if (numberStr.length >= 3) str = getDigit(number/100, false) + '百' + str;
-  if (numberStr.length >= 4) str = getDigit(number/1000, false) + '千' + str;
-  if (numberStr.length >= 5) str = getDigit(number/10000) + '万' + str;
+  if (numberStr.charAt(numLen-1) > 0) str = getDigit(number) + str;
+  if (numberStr.charAt(numLen-2) > 0) str = getDigit(number/10, false) + '十' + str;
+  if (numberStr.charAt(numLen-3) > 0) str = getDigit(number/100, false) + '百' + str;
+  if (numberStr.charAt(numLen-4) > 0) str = getDigit(number/1000, false) + '千' + str;
+  if (numberStr.charAt(numLen-5) > 0) str = getDigit(number/10000) + '万' + str;
 
+  if (str.length == 1) str = '0' + str;
   $("#jap").html(str);
 }
 
