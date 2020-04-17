@@ -378,7 +378,13 @@ function addTooltip(node) {
 
   // Check if overflow: hidden on node, if so then floatMessages will get cut-off
   // Anchor the tooltip to the first parent without overflow: hidden
-  while ($(node).css('overflow') == 'hidden') node = node.parentNode;
+  // We only search up 4 levels
+  var hNode = node;
+  for (var i = 0; i < 4; i++) {
+    if ($(hNode).css('overflow') == 'hidden') node = hNode.parentNode;
+
+    hNode = hNode.parentNode;
+  }
 
   $(node).append('<span id="jr-tooltip"><span>?%</span> <span>?%</span></span>');
   $(node).addClass('jr-ttParent');
