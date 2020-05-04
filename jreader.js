@@ -422,14 +422,15 @@ function updateTooltip() {
   }
 }
 function clearTooltip() {
-  var floatText = $('.floatAway');
+  var floatText = $('#jr-tooltip').siblings('.floatAway');
 
-  if (!floatText) {
+  if (floatText.length == 0) {
     $('#jr-tooltip').remove();
     $('.jr-ttParent').removeClass('jr-ttParent');
+    closingPopup = false;
   }else {
-    closingPopup = true;
     $('#jr-tooltip').css('display', 'none');
+    closingPopup = true;
   }
 }
 function floatMessage(msg) {
@@ -446,7 +447,7 @@ function floatMessage(msg) {
     if (closingPopup) {
       $('#jr-tooltip').remove();
       $('.jr-ttParent').removeClass('jr-ttParent');
-      closingPopup = true;
+      closingPopup = false;
     }
   });
 }
