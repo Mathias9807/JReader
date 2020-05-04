@@ -17,15 +17,19 @@
   right: 0;
   font-size: 11px;
   background: #EEE;
-  color: #88D;
+  color: #FF7C0F;
   padding: 0 5px;
   border-bottom-left-radius: 8px;
   border: 1px solid #CCC;
   z-index: 1000002;
 }
-#jr-tooltip:hover { opacity: 0; }
-#jr-tooltip > span:last-child {
-  color: #FF7C0F;
+#jr-tooltip > span:nth-child(2) {
+  color: #88D;
+  margin-left: 1px;
+}
+#jr-tooltip > img {
+  height: 16px;
+  vertical-align: middle;
 }
 .jr-ttParent { position: relative; }
 

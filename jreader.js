@@ -1,6 +1,7 @@
 var content = null;
 var text = "";
 var searchingForDiv = false;
+var closingPopup = false;
 
 var forcedBreaks = [];
 var breaks = [];
@@ -119,16 +120,20 @@ async function addAllMarkedWords() {
   findBreaks();
 }
 
+function closePopup() {
+  searchingForDiv = true;
+  clearMarking(content);
+  clearTooltip();
+  content.removeEventListener('click', textClicked);
+  content = null;
+}
+
 document.addEventListener('keyup', e => {
   if (e.altKey && !e.shiftKey && e.keyCode == 90) addAllMarkedWords();
   // Search for new paragraph when Ctrl-Shift-Z is pressed
   if (e.altKey && e.shiftKey && e.keyCode == 90) {
     if (content) {
-      searchingForDiv = true;
-      clearMarking(content);
-      clearTooltip();
-      content.removeEventListener('click', textClicked);
-      content = null;
+      closePopup();
     }else {
       browser.runtime.sendMessage({request: 'start'});
       document.body.addEventListener('mousemove', highlightHover, false);
@@ -352,6 +357,8 @@ function addHl(node, start, len, className) {
 }
 function clearMarking(node, fromIndex) {
   console.log("clearMarking");
+  if (node == null) return;
+
   if (typeof fromIndex != "undefined") {
     console.log("Removing highlighted nodes after", fromIndex);
     for (var i = uWords.findIndex(e => e >= fromIndex); i < uNodes.length; i++) {
@@ -375,6 +382,7 @@ function clearMarkingWord(index) {
 // Add word percentage tooltip to node
 function addTooltip(node) {
   clearTooltip();
+  closingPopup = false;
 
   // Check if overflow: hidden on node, if so then floatMessages will get cut-off
   // Anchor the tooltip to the first parent without overflow: hidden
@@ -386,8 +394,21 @@ function addTooltip(node) {
     hNode = hNode.parentNode;
   }
 
-  $(node).append('<span id="jr-tooltip"><span>?%</span> <span>?%</span></span>');
+  $(node).append(`
+  <span id="jr-tooltip">
+    <img id="jr-check" src="${browser.runtime.getURL("check.svg")}" alt="Accept selection">
+    <span>?%</span> <span>?%</span>
+    <img id="jr-close" src="${browser.runtime.getURL("close.svg")}" alt="Close selection">
+  </span>
+  `);
   $(node).addClass('jr-ttParent');
+  $('#jr-check').on('click', async function() {
+    await addAllMarkedWords();
+    closePopup();
+  });
+  $('#jr-close').on('click', function() {
+    closePopup();
+  });
 }
 function updateTooltip() {
   var tooltip = document.getElementById('jr-tooltip');
@@ -396,22 +417,37 @@ function updateTooltip() {
     var w = new Set([...indices]);
     var wMinusU = new Set([...w].filter(word => !uDict.has(word) && !oDict.has(word)));
     var wMinusO = new Set([...w].filter(word => oDict.has(word) == true));
-    tooltip.childNodes[0].textContent = Math.round(100*wMinusU.size/w.size) + '%';
-    tooltip.childNodes[2].textContent = Math.round(100*wMinusO.size/w.size) + '%';
+    tooltip.childNodes[3].textContent = Math.round(100*wMinusU.size/w.size) + '%';
+    tooltip.childNodes[5].textContent = Math.round(100*wMinusO.size/w.size) + '%';
   }
 }
 function clearTooltip() {
-  $('#jr-tooltip').remove();
-  $('.jr-ttParent').removeClass('jr-ttParent');
+  var floatText = $('.floatAway');
+
+  if (!floatText) {
+    $('#jr-tooltip').remove();
+    $('.jr-ttParent').removeClass('jr-ttParent');
+  }else {
+    closingPopup = true;
+    $('#jr-tooltip').css('display', 'none');
+  }
 }
 function floatMessage(msg) {
   var tooltip = document.getElementById('jr-tooltip');
+  if (!tooltip) tooltip = content;
+  console.log(tooltip);
   if (!tooltip) return;
 
-  // $(tooltip).after('<span class="floatAway">' + msg + '</span>');
   var floatAway = $('<span class="floatAway">' + msg + '</span>').insertAfter(tooltip);
   floatAway.on('animationend', function() {
     floatAway.remove();
+
+    // Close the popup if this float text was preventing it from closing before
+    if (closingPopup) {
+      $('#jr-tooltip').remove();
+      $('.jr-ttParent').removeClass('jr-ttParent');
+      closingPopup = true;
+    }
   });
 }
 
