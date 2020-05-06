@@ -13,15 +13,19 @@
 
 #jr-tooltip {
   position: absolute;
-  top: -1em;
+  top: -100%;
   right: 0;
-  font-size: 11px;
+  font-size: 13px;
   background: #EEE;
   color: #FF7C0F;
-  padding: 0 5px;
+  padding: 2px 5px;
+  padding-top: 4px;
+  font-weight: bold;
   border-bottom-left-radius: 8px;
   border: 1px solid #CCC;
   z-index: 1000002;
+  line-height: 1em;
+  letter-spacing: normal;
 }
 #jr-tooltip > span:nth-child(2) {
   color: #88D;
@@ -30,6 +34,11 @@
 #jr-tooltip > img {
   height: 16px;
   vertical-align: middle;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: inline;
 }
 .jr-ttParent { position: relative; }
 
