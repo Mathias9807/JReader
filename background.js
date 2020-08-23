@@ -314,13 +314,10 @@ function isWord(word) {
                 .replace(/そう$/, 'す').replace(/よう$/, 'る');
   if (inDict(volitional)) return volitional;
 
-  // Is it want-to form of a verb?
-  if (out = inDict(deConjugateEnding(word, 'たい', 'る'))) return out;
-
   // Is it polite form of something? (行きます、行きたい)
   // If so this will turn it into base form
   polite = word.replace(/る$/, '').replace(/ます$/, '').replace(/ました$/, '')
-              .replace(/ません$/, '').replace(/たい$/, '')
+              .replace(/ません$/, '').replace(/たい$/, '').replace(/たく$/, '')
               .replace(/ましょう$/, '').replace(/そう$/, '');
 
   // Turn base form into verb
