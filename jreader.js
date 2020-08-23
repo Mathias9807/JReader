@@ -129,8 +129,11 @@ function closePopup() {
 }
 
 document.addEventListener('keyup', e => {
-  if (e.altKey && !e.shiftKey && e.keyCode == 90) addAllMarkedWords();
-  // Search for new paragraph when Ctrl-Shift-Z is pressed
+  if (e.altKey && !e.shiftKey && e.keyCode == 90) {
+    addAllMarkedWords();
+    closePopup();
+  }
+  // Search for new paragraph when Alt-Shift-Z is pressed
   if (e.altKey && e.shiftKey && e.keyCode == 90) {
     if (content) {
       closePopup();

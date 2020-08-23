@@ -13,7 +13,7 @@
 
 #jr-tooltip {
   position: absolute;
-  top: -100%;
+  top: -1.5em;
   right: 0;
   font-size: 13px;
   background: #EEE;
