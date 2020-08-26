@@ -84,7 +84,7 @@ async function findBreaks() {
   console.log("\tDone");
 }
 
-async function reHighlightText(firstChange=0) {
+async function reHighlightText(firstChange=0, to=200) {
   var marks = await browser.runtime.sendMessage({request: 'findMarkings',
     words: words, firstChange: firstChange, uWordsOld: uWords, oWordsOld: oWords});
   uWords = marks.uWords;
@@ -94,10 +94,12 @@ async function reHighlightText(firstChange=0) {
 
   for (var i of marks.uWords) {
     if (i < firstChange) continue;
+    if (i > firstChange + to) break;
     uNodes.push(markText(content.childNodes[0], breaks[i], words[i].length));
   }
   for (var i of marks.oWords) {
     if (i < firstChange) continue;
+    if (i > firstChange + to) break;
     oNodes.push(hlText(content.childNodes[0], breaks[i], words[i].length));
   }
 }
@@ -377,6 +379,7 @@ function clearMarking(node, fromIndex) {
     $(node).find(".jr-hl").contents().unwrap();
   }
   node.normalize();
+  console.log("        Done");
 }
 function clearMarkingWord(index) {
     $(uNodes[index]).contents().unwrap();
