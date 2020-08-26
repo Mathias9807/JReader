@@ -392,6 +392,7 @@ function addTooltip(node) {
   // We only search up 4 levels
   var hNode = node;
   for (var i = 0; i < 4; i++) {
+    if (hNode.parentNode.nodeName === "BODY") break;
     if ($(hNode).css('overflow') == 'hidden') node = hNode.parentNode;
 
     hNode = hNode.parentNode;
