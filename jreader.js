@@ -403,6 +403,7 @@ function addTooltip(node) {
     <img id="jr-check" src="${browser.runtime.getURL("check.svg")}" alt="Accept selection">
     <span>?%</span> <span>?%</span>
     <img id="jr-close" src="${browser.runtime.getURL("close.svg")}" alt="Close selection">
+    <span class="jr-hoverText">Loading...</span>
   </span>
   `);
   $(node).addClass('jr-ttParent');
@@ -423,6 +424,9 @@ function updateTooltip() {
     var wMinusO = new Set([...w].filter(word => oDict.has(word) == true));
     tooltip.childNodes[3].textContent = Math.round(100*wMinusU.size/w.size) + '%';
     tooltip.childNodes[5].textContent = Math.round(100*wMinusO.size/w.size) + '%';
+
+    // Write number of words into tooltip hovertext
+    tooltip.childNodes[9].textContent = `${uWords.length} new / ${oWords.length} ylw / ${words.length} total`;
   }
 }
 function clearTooltip() {
