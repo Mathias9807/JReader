@@ -17,18 +17,16 @@ async function loadUserDicts() {
   // var uDictStorage = syncStorage["uDict"];
   // if ($.isArray(uDictStorage) && uDictStorage.length > 0)
   //   uDict = new Set(uDictStorage);
-  for (var l in localStorage["uDict"]) {
-    uDict.add(l);
-  }
+  if ($.isArray(localStorage["uDict"]))
+    uDict = new Set(localStorage["uDict"]);
 
   // Fetch unknown words dictionary
   oDict = new Set();
   // var oDictStorage = syncStorage["oDict"];
   // if ($.isArray(oDictStorage) && oDictStorage.length > 0)
   //   oDict = new Set(oDictStorage);
-  for (var l in localStorage["oDict"]) {
-    oDict.add(l);
-  }
+  if ($.isArray(localStorage["oDict"]))
+    oDict = new Set(localStorage["oDict"]);
 }
 
 async function writeUDict() {
