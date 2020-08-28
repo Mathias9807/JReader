@@ -72,7 +72,8 @@
   position: absolute;
   right: 0;
   font-size: 11px;
-  color: #333;
+  color: #FFF;
+  mix-blend-mode: difference;
   animation-name: floatAway;
   animation-duration: 1s;
   animation-timing-function: linear;
