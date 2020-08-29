@@ -5,6 +5,7 @@
 
 var active = false;
 var d_index, k_index, r_index;
+var d_tree;
 var searchMaxLen = 7;
 
 loadUserDicts();
@@ -111,16 +112,14 @@ async function findBreaks(text, forcedBreaks) {
   for (var i = 0; i < text.length; i++) {
     while (i >= nextBreak) nextBreak = forcedBreaks[++breakIndex] || 999999;
 
-    var subText = findLongestWord(
-      text.substring(i, i + Math.min(nextBreak - i, searchMaxLen)));
+    var subText = findLongestWord(text, i);
     if (!subText) continue;
 
     // Handle single character particles ruining the next word
     // If the character after this one gives a longer or equal length word as
     // this one then this character might just be a particle
     if ('はがをでにやもとの'.includes(text[i])) {
-      var nextWord = findLongestWord(
-        text.substring(i+1, i + Math.min(nextBreak - i, searchMaxLen)));
+      var nextWord = findLongestWord(text, i+1);
       if (nextWord && nextWord.length >= subText.length)
         subText = text[i];
     }
@@ -158,14 +157,30 @@ async function findMarkings(words, firstChange=0, uWordsOld, oWordsOld) {
   return { uWords: uWords, oWords: oWords }
 }
 
-function findLongestWord(text) {
-  for (var i = text.length; i > 0; i--) {
-    var subText = text.substring(0, i);
-
-    if (isWord(subText)) {
-      return subText;
+// Find the longest word starting from index 'from'
+function findLongestWord(text, from) {
+  // Search from the first character and try to follow the trees nodes
+  // to find the longest match
+  var curNode = d_tree;
+  var word = "";
+  for (var i = 0; from + i < text.length; i++) {
+    var c = text[from + i];
+    if (c in curNode) {
+      word += c;
+      curNode = curNode[c];
+    }else {
+      // Skip to the next word
+      break;
     }
   }
+  return word;
+  // for (var i = text.length; i > 0; i--) {
+  //   var subText = text.substring(0, i);
+
+  //   if (isWord(subText)) {
+  //     return subText;
+  //   }
+  // }
 }
 
 async function loadIndexes() {
@@ -182,10 +197,11 @@ async function loadIndexes() {
 
 // Load dict and the indices, from localstorage if there
 async function loadDict() {
-  if (d_index && k_index && r_index) {
-    console.log("Using cached dictionary");
-    return;
-  }
+  // TODO: Reenable cache
+  // if (d_index && k_index && r_index) {
+  //   console.log("Using cached dictionary");
+  //   return;
+  // }
 
   // Get the dictionary
   console.log("Downloading dictionary...");
@@ -228,6 +244,33 @@ async function loadDict() {
 
   console.log("Indexed dictionary");
 
+  // Build word tree
+  d_tree = {text: "", id: ""};
+
+  var buildTree = (word, index) => {
+    var node = d_tree;
+  
+    // Iterate up each character of the word and add it if it doesn't exist
+    var chars = "";
+    for (c of word) {
+      chars += c;
+      if (c in node)
+        node = node[c];
+      else {
+        node[c] = {};
+        node[c].text = chars;
+        node[c].id = index;
+        node = node[c];
+      }
+    }
+  }
+  
+  // Add each word
+  for (w in k_index)
+    buildTree(w, k_index[w]);
+  for (w in r_index)
+    buildTree(w, r_index[w]);
+
   // Store the indexes
   console.log("Saving the indexes");
   try {
@@ -239,6 +282,14 @@ async function loadDict() {
 
   // Remove dict reference to reduce memory usage
   dict = null;
+}
+
+function printTree(root, indent=0) {
+  console.log(' '.repeat(indent) + root.text);
+  for (n in root) {
+    if (n == 'text') continue;
+    printTree(root[n], indent + 1);
+  }
 }
 
 // Check if this word (or a conjugation) exists in the dictionary

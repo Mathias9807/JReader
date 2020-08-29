@@ -1,0 +1,16 @@
+Use a huffman-like tree of words instead of a normal list as dictionary. Traverse the tree when matching characters to a word to find longest match without having a set search distance. 
+
+です、で、だ、すで
+
+ +-でーす
+-+-だ
+ +-すで
+
+The character で is found. The branch for that character is followed. The next character is a れ. This character is not a branch of で so the search is stopped and で is used as the dictionary lookup. 
+
+The root should be searched with the first character of the "word" but if a certain character only ever shows up with a single word then that word should be the only entry under that character. See で/す(separate) vs すで(one entry). This should reduce complexity with long phrases in the dictionary. 
+
+If two words start the same but differ halfway through then they should be stored under the same entry up until the point where they differ at which point the node will have the two options as direct and only children. 
+
+If a certain dictionary entry could not be reached just by the provided letters an effort should be made to deconjugate the word incase the conjugation is what changed it from the dictionary entry.
+
