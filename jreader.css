@@ -68,6 +68,10 @@
   visibility: visible;
 }
 
+#jr-tooltip img {
+  cursor: pointer;
+}
+
 .floatAway {
   position: absolute;
   right: 0;
