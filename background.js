@@ -11,6 +11,7 @@ loadUserDicts();
 
 browser.runtime.onMessage.addListener(onMessage);
 function onMessage(data, sender, response) {
+  // console.log("onMessage("+data.request+")");
   if (!data["request"]) {
     console.log("No request value for message");
     return;

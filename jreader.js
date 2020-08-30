@@ -59,8 +59,10 @@ async function parsePage() {
 
 // Find word breaks in text
 async function findBreaks() {
+  console.log("Process text");
   var result = await browser.runtime.sendMessage({request: 'findBreaks',
     text: text, forcedBreaks: forcedBreaks});
+  console.log("        Done");
   words = result.words;
   indices = result.indices;
   breaks = result.breaks;
@@ -74,17 +76,22 @@ async function findBreaks() {
   console.log("Matching words against user dictionary...");
   uNodes = [];
   oNodes = [];
-  for (var i = 0; i < breaks.length; i++) {
-    var word = words[i];
-    if (oWords.includes(i))
-      oNodes.push(hlText(content.childNodes[0], breaks[i], word.length));
-    else if (uWords.includes(i))
-      uNodes.push(markText(content.childNodes[0], breaks[i], word.length));
+  var start = performance.now();
+
+  var oBreaks = [], uBreaks = [], oLengths = [], uLengths = [];
+  for (var i of uWords) {
+      uBreaks.push(breaks[i]); uLengths.push(words[i].length);
   }
-  console.log("\tDone");
+  for (var i of oWords) {
+      oBreaks.push(breaks[i]); oLengths.push(words[i].length);
+  }
+  oNodes.push(...hlTexts(content.childNodes[0], oBreaks, oLengths));
+  uNodes.push(...markTexts(content.childNodes[0], uBreaks, uLengths));
+
+  console.log("\tDone in " + (performance.now() - start) + "ms");
 }
 
-async function reHighlightText(firstChange=0, to=200) {
+async function reHighlightText(firstChange=0) {
   var marks = await browser.runtime.sendMessage({request: 'findMarkings',
     words: words, firstChange: firstChange, uWordsOld: uWords, oWordsOld: oWords});
   uWords = marks.uWords;
@@ -92,16 +99,17 @@ async function reHighlightText(firstChange=0, to=200) {
 
   clearMarking(content, firstChange);
 
+  var oBreaks = [], uBreaks = [], oLengths = [], uLengths = [];
   for (var i of marks.uWords) {
     if (i < firstChange) continue;
-    if (i > firstChange + to) break;
-    uNodes.push(markText(content.childNodes[0], breaks[i], words[i].length));
+    uBreaks.push(breaks[i]); uLengths.push(words[i].length);
   }
+  uNodes.push(...markTexts(content.childNodes[0], uBreaks, uLengths));
   for (var i of marks.oWords) {
     if (i < firstChange) continue;
-    if (i > firstChange + to) break;
-    oNodes.push(hlText(content.childNodes[0], breaks[i], words[i].length));
+    oBreaks.push(breaks[i]); oLengths.push(words[i].length);
   }
+  oNodes.push(...hlTexts(content.childNodes[0], oBreaks, oLengths));
 }
 
 async function addAllMarkedWords() {
@@ -305,61 +313,93 @@ function addHlSpan(node, className) {
   return hl;
 }
 
-function markText(node, start, len) { return addHl(node, start, len, 'jr-new'); }
-function hlText(node, start, len) { return addHl(node, start, len, 'jr-hl'); }
-function addHl(node, start, len, className) {
-	// Only care about text nodes
-	// list containing every text node to highlight
-  var textNodes = [];
+function markTexts(node, start, len) { return addHls(node, start, len, 'jr-new'); }
+function hlTexts(node, start, len) { return addHls(node, start, len, 'jr-hl'); }
+// Highlight the given spans of text starting from node
+// Takes as params the starting node, an array of start indices and
+// an accompanying array of text lengths.
+// Returns an array of arrays containing all newly created span elements
+// (may be more than one if text spans element boundaries)
+function addHls(node, starts, lens, className) {
   var origNode = node;
   var hlNode = null;
+  var outputNodes = [];
 
-	// Start on the starting node and search for the text node containing the 'start' text
-  if (node.nodeType !== Node.TEXT_NODE) node = nextTextNode(node);
-  while (start >= node.textContent.length) {
-    start -= node.textContent.length;
-    node = nextTextNode(node);
-  }
+  // Sort the starts and lens arrays according to start index
+  starts.map((v, i) => ({a: v, b: lens[i]}))
+      .sort((a, b) => a.a - b.a)
+      .forEach((v, i) => { starts[i] = v.a; lens[i] = v.b; });
 
-	// Split that node if start is in the middle of the text
-  if (start > 0) node = node.splitText(start);
-	// Split end if string ends in this node too
-  if (len < node.textContent.length) node.splitText(len);
-  if (len <= node.textContent.length) {
-		// If so, highlight that node and return here
-    hlNode = addHlSpan(node, className);
-    return [hlNode];
-  }
-	// Add this first text node to list
-  textNodes.push(node);
+  // Loop through each highlight that should be added
+  var cursor = 0; // Index of current node
+  for (var i = 0; i < starts.length; i++) {
+    var start = starts[i];
+    var len = lens[i];
 
-  // Text overflowed the text node, go to next text node
-  len -= node.textContent.length;
-	while (node = nextTextNode(node)) {
-    textNodes.push(node); // Add every next node until we reach end of text
-
-		// Split end if string ends in this node
-    if (len <= node.textContent.length) {
-      if (len < node.textContent.length) node.splitText(len);
-
-			// If so, highlight every node in list and return
-      hlNode = addHlSpan(textNodes[0], className);
-      $(hlNode).addClass("jr-l"); // Also remove right border-radius
-      var addedNodes = [hlNode];
-      for (var i = 1; i < textNodes.length; i++) {
-        hlNode = addHlSpan(textNodes[i], className);
-        // Remove border-radius on both sides
-        $(hlNode).addClass("jr-m");
-        addedNodes.push(hlNode);
-      }
-      $(hlNode).removeClass("jr-m");
-      $(hlNode).addClass("jr-r");
-      origNode.normalize();
-      return addedNodes;
+	  // Go from the starting node and step to the text node containing the 'start' text
+    if (node.nodeType !== Node.TEXT_NODE) node = nextTextNode(node);
+    while (start - cursor >= node.textContent.length) {
+      cursor += node.textContent.length;
+      node = nextTextNode(node);
     }
+
+	  // Split that node if start is in the middle of the text
+    if (start - cursor > 0) {
+      node = node.splitText(start - cursor);
+      cursor = start; // Realign cursor to the next node
+    }
+	  // Split end if string ends in this node too
+    if (len < node.textContent.length) node.splitText(len);
+    if (len <= node.textContent.length) {
+	    // If so, highlight that node and return here
+      hlNode = addHlSpan(node, className);
+      outputNodes.push([hlNode]);
+      node = hlNode.childNodes[0];
+      continue;
+    }
+
+	  // Only care about text nodes
+	  // list containing every text node to highlight
+    var textNodes = [];
+
+	  // Add this first text node to list
+    textNodes.push(node);
+
+    // Text overflowed the text node, go to next text node
     len -= node.textContent.length;
+    cursor += node.textContent.length;
+	  while (node = nextTextNode(node)) {
+      textNodes.push(node); // Add every next node until we reach end of text
+
+	    // Split end if string ends in this node
+      if (len <= node.textContent.length) {
+        if (len < node.textContent.length) node.splitText(len);
+
+	      // If so, highlight every node in list and return
+        hlNode = addHlSpan(textNodes[0], className);
+        $(hlNode).addClass("jr-l"); // Also remove right border-radius
+        var addedNodes = [hlNode];
+        for (var j = 1; j < textNodes.length; j++) {
+          hlNode = addHlSpan(textNodes[j], className);
+          // Remove border-radius on both sides
+          $(hlNode).addClass("jr-m");
+          addedNodes.push(hlNode);
+        }
+        $(hlNode).removeClass("jr-m");
+        $(hlNode).addClass("jr-r");
+        origNode.normalize();
+        outputNodes.push(addedNodes);
+        node = hlNode.childNodes[0];
+        break;
+      }
+      len -= node.textContent.length;
+      cursor += node.textContent.length;
+    }
   }
+
+  return outputNodes;
 }
+
 function clearMarking(node, fromIndex) {
   console.log("clearMarking");
   if (node == null) return;
