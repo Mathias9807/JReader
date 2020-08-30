@@ -99,17 +99,19 @@ async function reHighlightText(firstChange=0) {
 
   clearMarking(content, firstChange);
 
+  console.log("Matching words against user dictionary...");
+  var start = performance.now();
+
   var oBreaks = [], uBreaks = [], oLengths = [], uLengths = [];
-  for (var i of marks.uWords) {
-    if (i < firstChange) continue;
+  for (var i of uWords) {
     uBreaks.push(breaks[i]); uLengths.push(words[i].length);
   }
   uNodes.push(...markTexts(content.childNodes[0], uBreaks, uLengths));
-  for (var i of marks.oWords) {
-    if (i < firstChange) continue;
+  for (var i of oWords) {
     oBreaks.push(breaks[i]); oLengths.push(words[i].length);
   }
   oNodes.push(...hlTexts(content.childNodes[0], oBreaks, oLengths));
+  console.log("\tDone in " + (performance.now() - start) + "ms");
 }
 
 async function addAllMarkedWords() {
@@ -248,6 +250,7 @@ async function textClicked(e) {
     }
 
     await writeUDict();
+    console.log("Wrote uDict updates");
 
   }else {
     // Otherwise, add this point as a forced break
