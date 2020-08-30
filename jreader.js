@@ -450,11 +450,13 @@ function addTooltip(node) {
   </span>
   `);
   $(node).addClass('jr-ttParent');
-  $('#jr-check').on('click', async function() {
+  $('#jr-check').on('click', async function(e) {
+    e.stopPropagation();
     await addAllMarkedWords();
     closePopup();
   });
-  $('#jr-close').on('click', function() {
+  $('#jr-close').on('click', function(e) {
+    e.stopPropagation();
     closePopup();
   });
 }
