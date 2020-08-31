@@ -21,6 +21,7 @@ function onMessage(data, sender, response) {
       if (active) return;
       active = true;
       loadIndexes();
+      updateDayDict();
       return;
     }
     case "stop": {
@@ -91,6 +92,11 @@ function onMessage(data, sender, response) {
       oDict.clear();
       writeUDict();
       writeODict();
+      return;
+    }
+    case "newToday": {
+      updateDayDict();
+      response([...uDict].filter(i => !dayDict.has(i)).length);
       return;
     }
     default: {

@@ -72,9 +72,10 @@ $("#delete").click(deleteDicts);
 async function init() {
   uDict = await browser.runtime.sendMessage({request: 'getUDict'});
   oDict = await browser.runtime.sendMessage({request: 'getODict'});
+  dayWords = await browser.runtime.sendMessage({request: 'newToday'});
 
   if (!uDict || !oDict) return;
-  $("#known-words").html([...uDict].length + " words");
+  $("#known-words").html([...uDict].length + " words (Today: " + dayWords + ")");
   writeJapNumber();
 }
 
