@@ -265,7 +265,7 @@ async function textClicked(e) {
 
   // Rehighlight every word in case the user dicts were changed
   if (modifiedIndex < words.length)
-    reHighlightText(modifiedIndex);
+    await reHighlightText(modifiedIndex);
   updateTooltip();
 }
 
