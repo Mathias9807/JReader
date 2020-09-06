@@ -20,8 +20,10 @@
 body {
 	box-sizing: border-box;
 	width: 30em;
+	height: 100%;
 	color: #333;
 	font-family: Roboto, sans-serif;
+	overflow: hidden;
 }
 
 header {
@@ -30,6 +32,8 @@ header {
 	padding: 8px;
 	font-size: 16pt;
 	padding-left: 1em;
+	display: block;
+	width: 100%;
 }
 
 section {
@@ -42,7 +46,7 @@ h1 {
 	font-size: 16pt;
 }
 
-p {
+#import-message {
 	text-align: justify;
 	color: #555;
 	font-size: 9pt;
@@ -112,7 +116,7 @@ p {
 	color: #FFF;
 	border: 1px solid #AAA;
 	border-radius: 7px;
-	display: inline;
+	display: inline-block;
 	padding: 3px;
 }
 #on {
@@ -130,4 +134,53 @@ p {
 #off:active { background: #822; }
 #on.currentButton { background: #282; }
 #off.currentButton { background: #822; }
+
+#sync {
+	border: 1px solid #FFF;
+	float: right;
+	margin-top: 4pt;
+}
+#sync:hover { background: #66A; }
+#sync:active { background: #000; }
+
+#slide-in-form {
+	background: #FFF;
+	position: absolute;
+	width: 80%;
+	height: 100%;
+	right: -100%;
+	z-index: 10;
+	transition: 0.3s;
+
+	padding: 8px;
+}
+body.sync-menu #slide-in-form {
+	right: 0;
+	transition: 0.3s;
+}
+#shadow {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	display: none;
+	background: #000;
+	opacity: 0%;
+}
+body.sync-menu #shadow {
+	display: block;
+	opacity: 50%;
+}
+input {
+	width: auto;
+}
+
+#status {
+	border: 1px solid #AAA;
+	border-radius: 3px;
+	padding: 3px;
+	margin: auto;
+	display: block;
+	width: 100%;
+}
 

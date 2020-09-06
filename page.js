@@ -28,6 +28,12 @@ async function off() {
 }
 $("#off").click(off);
 
+function sync() {
+  $("body").toggleClass('sync-menu');
+}
+$("#sync").click(sync);
+$("#shadow").click(sync);
+
 function importJSON(e) {
   var jsonValue = JSON.parse($('#text').val());
 
@@ -105,4 +111,20 @@ function writeJapNumber() {
   if (str.length == 1) str = '0' + str;
   $("#jap").html(str);
 }
+
+async function submit() {
+  $("#status").html("Connecting...");
+  var ip = $("#ip").val();
+  resp = await browser.runtime.sendMessage({request: 'connect',
+      ip: ip});
+
+  if (resp) {
+    $("#status").html(`Connected to <a href="${ip}">${ip}</a>`);
+  }else {
+    $("#status").html("Failed to connect");
+  }
+
+  return false;
+}
+$("input:eq(1)").click(submit);
 

@@ -30,6 +30,10 @@ function onMessage(data, sender, response) {
       d_index = k_index = r_index = null;
       return;
     }
+    case "connect": {
+      response(connect(data.ip));
+      return;
+    }
     case "isActive": {
       response(active);
       return;
@@ -102,6 +106,19 @@ function onMessage(data, sender, response) {
     default: {
       console.log("No handler for command", data.request);
     }
+  }
+}
+
+async function connect(ip) {
+  console.log("Connecting to", ip);
+  try {
+    var response = await fetch(ip);
+    var data = await response.json();
+    console.log(data);
+    return true;
+  }catch (err) {
+    console.log(err);
+    return false;
   }
 }
 

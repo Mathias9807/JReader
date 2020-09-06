@@ -8,8 +8,22 @@
 		<link rel="stylesheet" type="text/css" href="page.css">
 	</head>
 	<body>
-		<header>JReader <span class="button" id="on">ON</span><span class="button" id="off">OFF</span></header>
+		<header>JReader
+			<span class="button" id="on">ON</span
+			><span class="button" id="off">OFF</span>
+			<span class="button" id="sync">Sync</span>
+		</header>
 		<section>
+			<div id="shadow"></div>
+			<div id="slide-in-form">
+				Sync known words to a server to keep progress between different computers.
+
+				<p><span id="status">Currently not connected</span></p>
+
+				<input type="text" id="ip" placeholder="Server URL" required></input>
+				<input type="submit" value="Connect"></input>
+			</div>
+
 			<div class="horiz">
 				<div class="vert"><h1>Current number known words</h1>
 				<div id="known-words"></div>
@@ -23,7 +37,7 @@
 				<div id="jap"></div>
 			</div>
 
-			<p>
+			<p id="import-message">
 			Import or export the user dictionary of known and unknown words as JSON. Can be used to create a backup of known words or to extract for other processing. Importing words will merge the imported list with the current list of words so no progress will be lost if separate wordlists are imported. 
 			<div class="center"><div id="delete">Delete all user dictionaries</div></div>
 		</section>
