@@ -1,6 +1,27 @@
+@font-face {
+	font-family: 'Roboto';
+	src: url('fonts/Roboto-Regular.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Roboto';
+	src: url('fonts/Roboto-Bold.ttf') format('truetype');
+	font-weight: bold;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Roboto';
+	src: url('fonts/Roboto-Italics.ttf') format('truetype');
+	font-weight: normal;
+	font-style: italic;
+}
+
 body {
 	box-sizing: border-box;
 	width: 30em;
+	color: #333;
+	font-family: Roboto, sans-serif;
 }
 
 header {
@@ -19,6 +40,12 @@ section {
 
 h1 {
 	font-size: 16pt;
+}
+
+p {
+	text-align: justify;
+	color: #555;
+	font-size: 9pt;
 }
 
 #inputs {
@@ -68,7 +95,7 @@ h1 {
 	display: flex;
 	flex-basis: 1.5em;
 	writing-mode: vertical-rl;
-  text-orientation: upright;
+	text-orientation: upright;
 	padding-top: 1em;
 	align-items: center;
 	text-align: center;
