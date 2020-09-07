@@ -115,6 +115,12 @@ async function connect(ip) {
     var response = await fetch(ip);
     var data = await response.json();
     console.log(data);
+
+    for (let w of data.uDict) uDict.add(w);
+    for (let w of data.oDict) oDict.add(w);
+
+    await writeUDict();
+    await writeODict();
     return true;
   }catch (err) {
     console.log(err);
