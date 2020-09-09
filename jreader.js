@@ -474,7 +474,7 @@ function updateTooltip() {
     tooltip.childNodes[5].textContent = Math.round(100*wMinusO.size/w.size) + '%';
 
     // Write number of words into tooltip hovertext
-    tooltip.childNodes[9].textContent = `${uWords.length} new / ${oWords.length} ylw / ${words.length} total`;
+    tooltip.childNodes[9].innerHTML = `${wMinusU.size} new / ${wMinusO.size} ylw / ${w.size} unique<br>${uWords.length} new / ${oWords.length} ylw / ${indices.length} total`;
   }
 }
 function clearTooltip() {

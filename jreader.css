@@ -53,10 +53,10 @@
   border-radius-bottom: 5px;
   font-size: 10px;
 
-  width: 126px;
+  width: 17em;
   top: 100%;
   left: 50%;
-  margin-left: -63px; /* Use half of the width (120/2 = 60), to center the tooltip */
+  margin-left: -9em; /* Use half of the width (17/2 = 8.5), to center the tooltip */
 
   /* Position the tooltip text - see examples below! */
   position: absolute;
