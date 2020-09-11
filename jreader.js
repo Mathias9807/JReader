@@ -452,6 +452,15 @@ function addTooltip(node) {
     <span class="jr-hoverText">Loading...</span>
   </span>
   `);
+
+  // Check if the tooltip's position is outside of the webpage
+  // If so, move it inside
+  var bodyRect = document.body.getBoundingClientRect(),
+    tooltipRect = document.getElementById('jr-tooltip').getBoundingClientRect(),
+    offset = tooltipRect.top - bodyRect.top;
+  console.log(bodyRect, tooltipRect, offset);
+  if (offset < 0) $('#jr-tooltip').css('top', '0');
+
   $(node).addClass('jr-ttParent');
   $('#jr-check').on('click', async function(e) {
     e.stopPropagation();
