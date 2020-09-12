@@ -78,8 +78,8 @@
   position: absolute;
   right: 0;
   font-size: 11px;
-  color: #FFF;
   mix-blend-mode: difference;
+  color: #FFF;
   animation-name: floatAway;
   animation-duration: 1s;
   animation-timing-function: linear;
@@ -92,3 +92,5 @@
   50%   { opacity: 1.0; }
   100%  { opacity: 0.0; top: -4em; }
 }
+
+.jr-white { background-color: #FFF; }
