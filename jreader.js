@@ -121,7 +121,7 @@ async function addAllMarkedWords() {
     if (oDict.has(dIndex) == false)
       uDict.add(dIndex);
   }
-  writeUDict();
+  await writeUDict();
 
   var newWords = uDict.size - nWordsPre;
   console.log("Added", newWords, "words!");
@@ -129,7 +129,7 @@ async function addAllMarkedWords() {
   floatMessage("Added " + newWords + " word" + (newWords==1 ? '' : 's'));
 
   // Reflow words
-  findBreaks();
+  await findBreaks();
 }
 
 function closePopup() {
@@ -140,9 +140,9 @@ function closePopup() {
   content = null;
 }
 
-document.addEventListener('keyup', e => {
+document.addEventListener('keyup', async e => {
   if (e.altKey && !e.shiftKey && e.keyCode == 90) {
-    addAllMarkedWords();
+    await addAllMarkedWords();
     closePopup();
   }
   // Search for new paragraph when Alt-Shift-Z is pressed
