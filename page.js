@@ -79,6 +79,15 @@ async function init() {
   uDict = await browser.runtime.sendMessage({request: 'getUDict'});
   oDict = await browser.runtime.sendMessage({request: 'getODict'});
   dayWords = await browser.runtime.sendMessage({request: 'newToday'});
+  ip = await browser.runtime.sendMessage({request: 'syncIP'});
+  sync = await browser.runtime.sendMessage({request: 'isSynced'});
+
+  console.log(sync, ip);
+  if (sync && ip) {
+    $("#status").html(`Connected to <a href="${ip}">${ip}</a>`);
+  }else {
+    $("#status").html("Failed to connect");
+  }
 
   if (!uDict || !oDict) return;
   $("#known-words").html([...uDict].length + " words (Today: " + dayWords + ")");

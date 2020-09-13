@@ -3,11 +3,14 @@
  * Loads the dictionary indexes and user dictionaries when the plugin is started.
  */
 
-var active = false;
+var active = false, syncConnected = false;
 var d_index, k_index, r_index;
 var searchMaxLen = 7;
 
-loadUserDicts();
+loadUserDicts().then(() => {
+  console.log("syncIP:", syncIP);
+  if (!!syncIP) connect(syncIP);
+});
 
 browser.runtime.onMessage.addListener(onMessage);
 function onMessage(data, sender, response) {
@@ -22,6 +25,7 @@ function onMessage(data, sender, response) {
       active = true;
       loadIndexes();
       updateDayDict();
+      connect(syncIP);
       return;
     }
     case "stop": {
@@ -36,6 +40,14 @@ function onMessage(data, sender, response) {
     }
     case "isActive": {
       response(active);
+      return;
+    }
+    case "isSynced": {
+      response(syncConnected);
+      return;
+    }
+    case "syncIP": {
+      response(syncIP);
       return;
     }
     case "findBreaks": {
@@ -110,17 +122,25 @@ function onMessage(data, sender, response) {
 }
 
 async function connect(ip) {
+  if (!ip) return false;
+  if (syncConnected && ip == syncIP)
+    return true;
+
   console.log("Connecting to", ip);
   try {
     var response = await fetch(ip);
     var data = await response.json();
-    console.log(data);
+    console.log("Retrieved:", data);
+
+    syncIP = ip;
+    syncConnected = true;
 
     for (let w of data.uDict) uDict.add(w);
     for (let w of data.oDict) oDict.add(w);
 
     await writeUDict();
     await writeODict();
+    await writeSync();
     return true;
   }catch (err) {
     console.log(err);

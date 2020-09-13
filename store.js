@@ -6,12 +6,12 @@
  * and merge the results.
  */
 
-var uDict, oDict, dayDict;
+var uDict, oDict, dayDict, syncIP;
 
 async function loadUserDicts() {
   // var syncStorage = await browser.storage.sync.get(["uDict", "oDict"]);
   var localStorage = await browser.storage.local.get(["uDict", "oDict",
-      "dayDict", "dayDate"]);
+      "dayDict", "dayDate", "sync"]);
 
   // Fetch user dictionary
   uDict = new Set();
@@ -33,6 +33,10 @@ async function loadUserDicts() {
   dayDict = new Set();
   if ($.isArray(localStorage["dayDict"]))
     dayDict = new Set(localStorage["dayDict"]);
+
+  syncIP = "";
+  if (!!localStorage["sync"])
+    syncIP = localStorage["sync"];
 
   await updateDayDict();
 }
@@ -72,5 +76,8 @@ async function writeODict() {
 }
 async function writeDayDict() {
   await browser.storage.local.set({"dayDict": [...dayDict]});
+}
+async function writeSync() {
+  await browser.storage.local.set({"sync": syncIP});
 }
 
