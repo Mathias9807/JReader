@@ -100,11 +100,13 @@ function onMessage(data, sender, response) {
     case "removeUWord": {
       uDict.delete(data.index);
       writeUDict();
+      deleteFromSync({uDict: [data.index]});
       return;
     }
     case "removeOWord": {
       oDict.delete(data.index);
       writeODict();
+      deleteFromSync({oDict: [data.index]});
       return;
     }
     case "dropAll": {
@@ -174,6 +176,19 @@ async function sync() {
     var response = await fetch(syncIP);
     var data = await response.json();
     console.log("Retrieved:", data);
+  }catch (err) {
+    console.log(err);
+  }
+}
+
+async function deleteFromSync(delDict) {
+  if (!syncConnected) return;
+  console.log("Removing words from sync", delDict);
+
+  try {
+    // DELETE the words from sync dictionaries
+    await fetch(syncIP, {method: 'DELETE', headers: {'Content-Type': 'text/plain'},
+        body: JSON.stringify(delDict)});
   }catch (err) {
     console.log(err);
   }
