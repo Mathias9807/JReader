@@ -2,30 +2,22 @@
  *
  * Handles storing the user dictionaries and indexes.
  *
- * When starting up, this will read indexes from both storage.sync and storage.local
- * and merge the results.
+ * When starting up, this will read indexes, dicts and day info from storage.local.
  */
 
 var uDict, oDict, dayDict, syncIP;
 
 async function loadUserDicts() {
-  // var syncStorage = await browser.storage.sync.get(["uDict", "oDict"]);
   var localStorage = await browser.storage.local.get(["uDict", "oDict",
       "dayDict", "dayDate", "sync"]);
 
   // Fetch user dictionary
   uDict = new Set();
-  // var uDictStorage = syncStorage["uDict"];
-  // if ($.isArray(uDictStorage) && uDictStorage.length > 0)
-  //   uDict = new Set(uDictStorage);
   if ($.isArray(localStorage["uDict"]))
     uDict = new Set(localStorage["uDict"]);
 
   // Fetch unknown words dictionary
   oDict = new Set();
-  // var oDictStorage = syncStorage["oDict"];
-  // if ($.isArray(oDictStorage) && oDictStorage.length > 0)
-  //   oDict = new Set(oDictStorage);
   if ($.isArray(localStorage["oDict"]))
     oDict = new Set(localStorage["oDict"]);
 

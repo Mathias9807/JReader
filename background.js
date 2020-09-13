@@ -50,6 +50,10 @@ function onMessage(data, sender, response) {
       response(syncIP);
       return;
     }
+    case "sync": {  // Send our dicts and read the remotes dicts
+      throttle(sync, 20000)(); // Only send once every 20 seconds
+      return;
+    }
     case "findBreaks": {
       response(findBreaks(data.text, data.forcedBreaks));
       return;
@@ -128,6 +132,12 @@ async function connect(ip) {
 
   console.log("Connecting to", ip);
   try {
+    // POST our current dictionary
+    console.log("Sending", JSON.stringify({uDict: uDict, oDict, oDict}));
+    await fetch(ip, {method: 'POST', headers: {'Content-Type': 'text/plain'},
+        body: JSON.stringify({uDict: Array.from(uDict), oDict: Array.from(oDict)})});
+
+    // and GET the servers dictionary
     var response = await fetch(ip);
     var data = await response.json();
     console.log("Retrieved:", data);
@@ -141,10 +151,31 @@ async function connect(ip) {
     await writeUDict();
     await writeODict();
     await writeSync();
+
+    console.log("\tSucceeded");
     return true;
   }catch (err) {
     console.log(err);
     return false;
+  }
+}
+
+async function sync() {
+  if (!syncConnected) return;
+  console.log("Synchronizing with server");
+
+  try {
+    // POST our current dictionary
+    console.log("Sending", JSON.stringify({uDict: uDict, oDict, oDict}));
+    await fetch(syncIP, {method: 'POST', headers: {'Content-Type': 'text/plain'},
+        body: JSON.stringify({uDict: Array.from(uDict), oDict: Array.from(oDict)})});
+
+    // and GET the servers dictionary
+    var response = await fetch(syncIP);
+    var data = await response.json();
+    console.log("Retrieved:", data);
+  }catch (err) {
+    console.log(err);
   }
 }
 
@@ -462,5 +493,18 @@ function dictIndex(word) {
   else if (r_index[base]) index = r_index[base][0];
   else return undefined;
   return d_index[index];
+}
+
+function throttle(callback, limit) {
+  var wait = false;                   // Initially, we're not waiting
+  return function() {                 // We return a throttled function
+    if (!wait) {                      // If we're not waiting
+      callback.call();                // Execute users function
+      wait = true;                    // Prevent future invocations
+      setTimeout(function () {        // After a period of time
+        wait = false;                 // And allow future invocations
+      }, limit);
+    }
+  }
 }
 

@@ -122,16 +122,16 @@ function writeJapNumber() {
 }
 
 async function submit() {
+  await on();
+  $("#off").removeClass('currentButton');
+  $("#on").addClass('currentButton');
+
   $("#status").html("Connecting...");
   var ip = $("#ip").val();
   resp = await browser.runtime.sendMessage({request: 'connect',
       ip: ip});
 
-  if (resp) {
-    $("#status").html(`Connected to <a href="${ip}">${ip}</a>`);
-  }else {
-    $("#status").html("Failed to connect");
-  }
+  await init();
 
   return false;
 }

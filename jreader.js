@@ -138,6 +138,9 @@ function closePopup() {
   clearTooltip();
   content.removeEventListener('click', textClicked);
   content = null;
+
+  // Resync dictionary every time we close a popup
+  browser.runtime.sendMessage({request: 'sync'});
 }
 
 document.addEventListener('keyup', async e => {
