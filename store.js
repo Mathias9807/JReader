@@ -60,6 +60,12 @@ async function updateDayDict() {
   console.log("New words today:", ([...uDict].filter(i => !dayDict.has(i)).length));
 }
 
+async function resetDay() {
+  dayDict = new Set([...uDict]);
+  await writeDayDict();
+  await browser.storage.local.set({"dayDate": JSON.stringify(new Date())});
+}
+
 async function writeUDict() {
   await browser.storage.local.set({"uDict": [...uDict]});
 }

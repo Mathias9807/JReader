@@ -121,6 +121,10 @@ function onMessage(data, sender, response) {
       response([...uDict].filter(i => !dayDict.has(i)).length);
       return;
     }
+    case "resetDay": {
+      resetDay();
+      return;
+    }
     default: {
       console.log("No handler for command", data.request);
     }

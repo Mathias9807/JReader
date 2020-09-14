@@ -28,6 +28,17 @@ async function off() {
 }
 $("#off").click(off);
 
+async function resetClock() {
+  console.log("Reset daily count");
+  active = await browser.runtime.sendMessage({request: 'isActive'});
+  if (!active) {
+    await browser.runtime.sendMessage({request: 'start'});
+  }
+  await browser.runtime.sendMessage({request: 'resetDay'});
+  init();
+}
+$("#clockReset").click(resetClock);
+
 function sync() {
   $("body").toggleClass('sync-menu');
 }
@@ -81,6 +92,13 @@ async function init() {
   dayWords = await browser.runtime.sendMessage({request: 'newToday'});
   ip = await browser.runtime.sendMessage({request: 'syncIP'});
   sync = await browser.runtime.sendMessage({request: 'isSynced'});
+
+  browser.runtime.sendMessage({request: 'isActive'}).then(active => {
+    $("#on").removeClass('currentButton');
+    $("#off").removeClass('currentButton');
+    if (active) $("#on").addClass('currentButton');
+    else $("#off").addClass('currentButton');
+  });
 
   console.log(sync, ip);
   if (sync && ip) {
