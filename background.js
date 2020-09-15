@@ -133,8 +133,7 @@ function onMessage(data, sender, response) {
 
 async function connect(ip) {
   if (!ip) return false;
-  if (syncConnected && ip == syncIP)
-    return true;
+  syncConnected = false;
 
   console.log("Connecting to", ip);
   try {
