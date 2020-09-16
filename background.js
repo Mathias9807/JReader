@@ -51,7 +51,7 @@ function onMessage(data, sender, response) {
       return;
     }
     case "sync": {  // Send our dicts and read the remotes dicts
-      throttle(sync, 20000)(); // Only send once every 20 seconds
+      syncThrottled(); // Only send once every 20 seconds
       return;
     }
     case "findBreaks": {
@@ -183,6 +183,7 @@ async function sync() {
     console.log(err);
   }
 }
+let syncThrottled = throttle(sync, 20000);
 
 async function deleteFromSync(delDict) {
   if (!syncConnected) return;
@@ -516,13 +517,18 @@ function dictIndex(word) {
 
 function throttle(callback, limit) {
   var wait = false;                   // Initially, we're not waiting
+  var queued = false;                 // If a call was stopped
   return function() {                 // We return a throttled function
     if (!wait) {                      // If we're not waiting
       callback.call();                // Execute users function
       wait = true;                    // Prevent future invocations
       setTimeout(function () {        // After a period of time
         wait = false;                 // And allow future invocations
+        if (queued) callback.call();
+        queued = false;
       }, limit);
+    }else {
+      queued = true;                  // A call was blocked
     }
   }
 }
