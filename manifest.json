@@ -36,7 +36,7 @@
   },
 
   "web_accessible_resources": [
-    "JMdict_e.json", "check.svg", "close.svg"
+    "JMdict_e.json.txt", "check.svg", "close.svg"
   ],
 
   "browser_action": {

@@ -288,7 +288,7 @@ async function loadDict() {
 
   // Get the dictionary
   console.log("Downloading dictionary...");
-  var resp = await fetch(browser.runtime.getURL("JMdict_e.json"));
+  var resp = await fetch(browser.runtime.getURL("JMdict_e.json.txt"));
   var dict = await resp.json();
   console.log("\tDone");
 
