@@ -1,0 +1,29 @@
+{
+  "name": "jreader",
+  "version": "1.0.0",
+  "description": "Japanese reader",
+  "main": "jreader.js",
+  "dependencies": {
+    "web-ext": "^5.0.0"
+  },
+  "devDependencies": {
+    "eslint-plugin-jquery": "^1.5.1",
+    "eslint": "^7.9.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "web-ext run --verbose",
+    "build": "web-ext build --overwrite-dest",
+    "sign": "export `cat .env` && web-ext sign --api-key $WEB_EXT_API_KEY --api-secret $WEB_EXT_API_SECRET"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mathias9807/JReader.git"
+  },
+  "author": "Mathias Johansson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mathias9807/JReader/issues"
+  },
+  "homepage": "https://github.com/Mathias9807/JReader#readme"
+}

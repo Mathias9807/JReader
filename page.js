@@ -11,7 +11,7 @@ browser.runtime.sendMessage({request: 'isActive'}).then(active => {
 async function on() {
   $("#off").removeClass('currentButton');
   $("#on").addClass('currentButton');
-  active = await browser.runtime.sendMessage({request: 'isActive'});
+  let active = await browser.runtime.sendMessage({request: 'isActive'});
   if (!active) {
     await browser.runtime.sendMessage({request: 'start'});
     init();
@@ -22,7 +22,7 @@ $("#on").click(on);
 async function off() {
   $("#off").addClass('currentButton');
   $("#on").removeClass('currentButton');
-  active = await browser.runtime.sendMessage({request: 'isActive'});
+  let active = await browser.runtime.sendMessage({request: 'isActive'});
   if (active)
     await browser.runtime.sendMessage({request: 'stop'});
 }
@@ -30,7 +30,7 @@ $("#off").click(off);
 
 async function resetClock() {
   console.log("Reset daily count");
-  active = await browser.runtime.sendMessage({request: 'isActive'});
+  let active = await browser.runtime.sendMessage({request: 'isActive'});
   if (!active) {
     await browser.runtime.sendMessage({request: 'start'});
   }
@@ -39,11 +39,11 @@ async function resetClock() {
 }
 $("#clockReset").click(resetClock);
 
-function sync() {
+function syncMenu() {
   $("body").toggleClass('sync-menu');
 }
-$("#sync").click(sync);
-$("#shadow").click(sync);
+$("#sync").click(syncMenu);
+$("#shadow").click(syncMenu);
 
 function importJSON(e) {
   var jsonValue = JSON.parse($('#text').val());
@@ -89,9 +89,9 @@ $("#delete").click(deleteDicts);
 async function init() {
   uDict = await browser.runtime.sendMessage({request: 'getUDict'});
   oDict = await browser.runtime.sendMessage({request: 'getODict'});
-  dayWords = await browser.runtime.sendMessage({request: 'newToday'});
-  ip = await browser.runtime.sendMessage({request: 'syncIP'});
-  sync = await browser.runtime.sendMessage({request: 'isSynced'});
+  let dayWords = await browser.runtime.sendMessage({request: 'newToday'});
+  let ip = await browser.runtime.sendMessage({request: 'syncIP'});
+  let sync = await browser.runtime.sendMessage({request: 'isSynced'});
 
   browser.runtime.sendMessage({request: 'isActive'}).then(active => {
     $("#on").removeClass('currentButton');
@@ -145,8 +145,8 @@ async function submit() {
   $("#on").addClass('currentButton');
 
   $("#status").html("Connecting...");
-  var ip = $("#ip").val();
-  resp = await browser.runtime.sendMessage({request: 'connect',
+  let ip = $("#ip").val();
+  let resp = await browser.runtime.sendMessage({request: 'connect',
       ip: ip});
 
   await init();

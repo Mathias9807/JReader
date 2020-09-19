@@ -1,0 +1,20 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+	"webextensions": true,
+	"jquery": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+        "ecmaVersion": 12
+    },
+    "plugins": [
+	"jquery"
+    ],
+    "rules": {
+        "no-unused-vars": "off",
+        "no-undef": "warn",
+        "no-cond-assign": "off"
+    }
+}

@@ -14,7 +14,7 @@ var uNodes = [], oNodes = [];
 // clearMarking(document.body);
 
 // Highlight the hovered element (For selecting content)
-prevElement = null;
+var prevElement = null;
 function highlightHover(e) {
   var elem = e.target || e.srcElement;
   if (prevElement!= null) {prevElement.classList.remove("jr-hover");}
@@ -78,11 +78,11 @@ async function findBreaks() {
   oNodes = [];
   var start = performance.now();
 
-  var oBreaks = [], uBreaks = [], oLengths = [], uLengths = [];
-  for (var i of uWords) {
+  var oBreaks = [], uBreaks = [], oLengths = [], uLengths = [], i = null;
+  for (i of uWords) {
       uBreaks.push(breaks[i]); uLengths.push(words[i].length);
   }
-  for (var i of oWords) {
+  for (i of oWords) {
       oBreaks.push(breaks[i]); oLengths.push(words[i].length);
   }
   oNodes.push(...hlTexts(content.childNodes[0], oBreaks, oLengths));
@@ -102,12 +102,12 @@ async function reHighlightText(firstChange=0) {
   console.log("Matching words against user dictionary...");
   var start = performance.now();
 
-  var oBreaks = [], uBreaks = [], oLengths = [], uLengths = [];
-  for (var i of uWords) {
+  var oBreaks = [], uBreaks = [], oLengths = [], uLengths = [], i = null;
+  for (i of uWords) {
     uBreaks.push(breaks[i]); uLengths.push(words[i].length);
   }
   uNodes.push(...markTexts(content.childNodes[0], uBreaks, uLengths));
-  for (var i of oWords) {
+  for (i of oWords) {
     oBreaks.push(breaks[i]); oLengths.push(words[i].length);
   }
   oNodes.push(...hlTexts(content.childNodes[0], oBreaks, oLengths));
@@ -208,9 +208,9 @@ async function textClicked(e) {
     }
 
     // Clear the word from uDict and add it to oDict
-    var word = words[breaks.indexOf(globalOffs)];
-    var base = await isWord(word);
-    var dIndex = await dictIndex(word);
+    let word = words[breaks.indexOf(globalOffs)];
+    let base = await isWord(word);
+    let dIndex = await dictIndex(word);
     if (word) {
       if (oDict.has(dIndex)) {
         oDict.delete(dIndex);
@@ -230,9 +230,9 @@ async function textClicked(e) {
   // Toggle between adding it to uDict and removing it
   }else if (breaks.includes(globalOffs)) {
     var breakIndex = breaks.indexOf(globalOffs);
-    var word = words[breakIndex];
-    var base = await isWord(word);
-    var dIndex = await dictIndex(word);
+    let word = words[breakIndex];
+    let base = await isWord(word);
+    let dIndex = await dictIndex(word);
     if (uDict.has(dIndex)) {
       uDict.delete(dIndex);
       await browser.runtime.sendMessage({request: 'removeUWord', index: dIndex});
@@ -342,46 +342,46 @@ function addHls(node, starts, lens, className) {
     var start = starts[i];
     var len = lens[i];
 
-	  // Go from the starting node and step to the text node containing the 'start' text
+    // Go from the starting node and step to the text node containing the 'start' text
     if (node.nodeType !== Node.TEXT_NODE) node = nextTextNode(node);
     while (start - cursor >= node.textContent.length) {
       cursor += node.textContent.length;
       node = nextTextNode(node);
     }
 
-	  // Split that node if start is in the middle of the text
+    // Split that node if start is in the middle of the text
     if (start - cursor > 0) {
       node = node.splitText(start - cursor);
       cursor = start; // Realign cursor to the next node
     }
-	  // Split end if string ends in this node too
+    // Split end if string ends in this node too
     if (len < node.textContent.length) node.splitText(len);
     if (len <= node.textContent.length) {
-	    // If so, highlight that node and return here
+      // If so, highlight that node and return here
       hlNode = addHlSpan(node, className);
       outputNodes.push([hlNode]);
       node = hlNode.childNodes[0];
       continue;
     }
 
-	  // Only care about text nodes
-	  // list containing every text node to highlight
+    // Only care about text nodes
+    // list containing every text node to highlight
     var textNodes = [];
 
-	  // Add this first text node to list
+    // Add this first text node to list
     textNodes.push(node);
 
     // Text overflowed the text node, go to next text node
     len -= node.textContent.length;
     cursor += node.textContent.length;
-	  while (node = nextTextNode(node)) {
+    while ((node = nextTextNode(node))) {
       textNodes.push(node); // Add every next node until we reach end of text
 
-	    // Split end if string ends in this node
+      // Split end if string ends in this node
       if (len <= node.textContent.length) {
         if (len < node.textContent.length) node.splitText(len);
 
-	      // If so, highlight every node in list and return
+        // If so, highlight every node in list and return
         hlNode = addHlSpan(textNodes[0], className);
         $(hlNode).addClass("jr-l"); // Also remove right border-radius
         var addedNodes = [hlNode];
@@ -412,10 +412,11 @@ function clearMarking(node, fromIndex) {
 
   if (typeof fromIndex != "undefined") {
     console.log("Removing highlighted nodes after", fromIndex);
-    for (var i = uWords.findIndex(e => e >= fromIndex); i < uNodes.length; i++) {
+    let i = null;
+    for (i = uWords.findIndex(e => e >= fromIndex); i < uNodes.length; i++) {
       $(uNodes[i]).contents().unwrap();
     }
-    for (var i = uWords.findIndex(e => e >= fromIndex); i < oNodes.length; i++) {
+    for (i = uWords.findIndex(e => e >= fromIndex); i < oNodes.length; i++) {
       $(oNodes[i]).contents().unwrap();
     }
     uNodes = uNodes.slice(0, fromIndex);
