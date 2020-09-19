@@ -52,7 +52,7 @@ async function parsePage() {
 
   // Try to find all the words in the text
   console.log("Parsing page for word breaks");
-  findBreaks();
+  await findBreaks();
 
   content.addEventListener('click', textClicked, false);
 }
@@ -171,9 +171,9 @@ function inDict(word) {
   return browser.runtime.sendMessage({request: 'inDict', word: word}); }
 function dictIndex(word) {
   return browser.runtime.sendMessage({request: 'dictIndex', word: word}); }
-async function writeUDict() {
+function writeUDict() {
   return browser.runtime.sendMessage({request: 'writeUDict', dict: [...uDict]}); }
-async function writeODict() {
+function writeODict() {
   return browser.runtime.sendMessage({request: 'writeODict', dict: [...oDict]}); }
 
 async function textClicked(e) {
@@ -241,7 +241,7 @@ async function textClicked(e) {
       // Remove the forced break here if there is one
       forcedBreaks = forcedBreaks.filter(e => e !== globalOffs);
       console.log("Filter force break at", word, "("+base+")");
-      findBreaks();
+      await findBreaks();
 
     }else {
       uDict.add(dIndex);

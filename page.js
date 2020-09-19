@@ -3,7 +3,7 @@ var uDict, oDict;
 browser.runtime.sendMessage({request: 'isActive'}).then(active => {
   if (active) {
     $("#on").addClass('currentButton');
-    init();
+    init(); /* eslint-disable-line */
   }else
     $("#off").addClass('currentButton');
 });
@@ -14,7 +14,7 @@ async function on() {
   let active = await browser.runtime.sendMessage({request: 'isActive'});
   if (!active) {
     await browser.runtime.sendMessage({request: 'start'});
-    init();
+    await init();
   }
 }
 $("#on").click(on);
@@ -35,7 +35,7 @@ async function resetClock() {
     await browser.runtime.sendMessage({request: 'start'});
   }
   await browser.runtime.sendMessage({request: 'resetDay'});
-  init();
+  await init();
 }
 $("#clockReset").click(resetClock);
 
@@ -112,9 +112,9 @@ async function init() {
   writeJapNumber();
 }
 
-async function writeUDict() {
+function writeUDict() {
   return browser.runtime.sendMessage({request: 'writeUDict', dict: [...uDict]}); }
-async function writeODict() {
+function writeODict() {
   return browser.runtime.sendMessage({request: 'writeODict', dict: [...oDict]}); }
 
 function getDigit(digit, ones=true) {

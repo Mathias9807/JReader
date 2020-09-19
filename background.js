@@ -23,7 +23,7 @@ function onMessage(data, sender, response) {
     case "start": {
       if (active) return;
       active = true;
-      loadIndexes();
+      loadIndexes(); /* eslint-disable-line */
       updateDayDict();
       connect(syncIP);
       return;
@@ -171,7 +171,7 @@ async function findBreaks(text, forcedBreaks) {
 }
 
 // Find what words are in uDict and oDict
-async function findMarkings(words, firstChange=0, uWordsOld, oWordsOld) {
+function findMarkings(words, firstChange=0, uWordsOld, oWordsOld) {
   console.log("Matching words against user dictionary...");
   var uWords = [], oWords = [];
   if (uWordsOld && oWordsOld) {

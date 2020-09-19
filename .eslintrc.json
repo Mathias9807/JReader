@@ -10,11 +10,14 @@
         "ecmaVersion": 12
     },
     "plugins": [
-	"jquery"
+	"jquery",
+        "no-floating-promise"
     ],
     "rules": {
         "no-unused-vars": "off",
         "no-undef": "warn",
-        "no-cond-assign": "off"
+        "no-cond-assign": "off",
+        "require-await": "warn",
+        "no-floating-promise/no-floating-promise": "warn"
     }
 }

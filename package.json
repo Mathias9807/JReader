@@ -4,11 +4,12 @@
   "description": "Japanese reader",
   "main": "jreader.js",
   "dependencies": {
+    "eslint-plugin-no-floating-promise": "^1.0.1",
     "web-ext": "^5.0.0"
   },
   "devDependencies": {
-    "eslint-plugin-jquery": "^1.5.1",
-    "eslint": "^7.9.0"
+    "eslint": "^7.9.0",
+    "eslint-plugin-jquery": "^1.5.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
