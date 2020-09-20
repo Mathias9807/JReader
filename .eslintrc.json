@@ -18,6 +18,7 @@
         "no-undef": "warn",
         "no-cond-assign": "off",
         "require-await": "warn",
-        "no-floating-promise/no-floating-promise": "warn"
+        "no-floating-promise/no-floating-promise": "warn",
+        "semi": "warn"
     }
 }

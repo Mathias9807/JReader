@@ -8,7 +8,11 @@ var breaks = [];
 var words = [];
 var indices = [];
 
-var uDict, oDict, uWords, oWords;
+var uDict, oDict;
+
+// What words should be highlighted blue/yellow stored as an array of word indices
+var uWords, oWords;
+
 var uNodes = [], oNodes = [];
 
 // clearMarking(document.body);
@@ -92,25 +96,62 @@ async function findBreaks() {
 }
 
 async function reHighlightText(firstChange=0) {
+  var start = performance.now();
+  let oldUWords = [...uWords];
+  let oldOWords = [...oWords];
+  let i = null;
+
   var marks = await browser.runtime.sendMessage({request: 'findMarkings',
-    words: words, firstChange: firstChange, uWordsOld: uWords, oWordsOld: oWords});
+    words: words, firstChange: 0, uWordsOld: uWords, oWordsOld: oWords});
   uWords = marks.uWords;
   oWords = marks.oWords;
 
-  clearMarking(content, firstChange);
+  // Since the yellow markings are generally few, just re-mark everything
+  // Clear the yellow first, then process blue, then add all yellow
+  while (oNodes.length > 0)
+    clearHighlightWord(0);
 
-  console.log("Matching words against user dictionary...");
-  var start = performance.now();
+  // Loop through new uWords array
+  // Keep index into old and new uWords arrays and increment simultaneously
+  // Whenever we find a disrepancy we know an element has been added or removed
+  // in that index
+  let nodesOffset = 0; // uNodes indexes will change as elements are added and removed
+                       // Keep track of changes with this offset
+  let uBreaks = [], uLengths = [], uNodeSpaces = [];
+  for (let nI = 0, oI = 0; nI < uWords.length || oI < oldUWords.length; nI++, oI++) {
+    // If Old value is less than new value, remove and increment until equal
+    // If new values run out but there are still old values left, keep going
+    while (oldUWords[oI] < uWords[nI]
+        || (nI >= uWords.length && oI < oldUWords.length)) {
+      clearMarkingWord(oI++ + nodesOffset--);
+    }
 
-  var oBreaks = [], uBreaks = [], oLengths = [], uLengths = [], i = null;
-  for (i of uWords) {
-    uBreaks.push(breaks[i]); uLengths.push(words[i].length);
+    // If new value behind old value, add marking here and increment new until equal
+    // If old values run out but there are still new values left, keep going
+    while (uWords[nI] < oldUWords[oI]
+        || (oI >= oldUWords.length && nI < uWords.length)) {
+      let nodeIndex = nI + nodesOffset;
+      uNodes.splice(nodeIndex, 0, undefined); // Leave empty to fill in once we've
+                                              // called markTexts
+      uBreaks.push(breaks[uWords[nI]]); uLengths.push(words[uWords[nI]].length);
+      uNodeSpaces.push(nodeIndex); // Remember the empty index
+      nI++;
+    }
   }
-  uNodes.push(...markTexts(content.childNodes[0], uBreaks, uLengths));
+  console.log("Calling markTexts");
+  let nodes = markTexts(content.childNodes[0], uBreaks, uLengths);
+  console.log("\tdone");
+  for (i = 0; i < uNodeSpaces.length; i++) {
+    uNodes[uNodeSpaces[i]] = nodes[i];
+  }
+
+  // Add yellow markings after blue have been handled
+  var oBreaks = [], oLengths = [];
   for (i of oWords) {
     oBreaks.push(breaks[i]); oLengths.push(words[i].length);
   }
   oNodes.push(...hlTexts(content.childNodes[0], oBreaks, oLengths));
+
   console.log("\tDone in " + (performance.now() - start) + "ms");
 }
 
@@ -239,9 +280,11 @@ async function textClicked(e) {
       console.log("Remove", word, "("+base+")", "from uDict");
 
       // Remove the forced break here if there is one
-      forcedBreaks = forcedBreaks.filter(e => e !== globalOffs);
-      console.log("Filter force break at", word, "("+base+")");
-      await findBreaks();
+      if (forcedBreaks.includes(globalOffs)) {
+        forcedBreaks = forcedBreaks.filter(e => e !== globalOffs);
+        console.log("Filter force break at", word, "("+base+")");
+        await findBreaks();
+      }
 
     }else {
       uDict.add(dIndex);
@@ -429,7 +472,12 @@ function clearMarking(node, fromIndex) {
   console.log("        Done");
 }
 function clearMarkingWord(index) {
-    $(uNodes[index]).contents().unwrap();
+  $(uNodes[index]).contents().unwrap();
+  uNodes.splice(index, 1);
+}
+function clearHighlightWord(index) {
+  $(oNodes[index]).contents().unwrap();
+  oNodes.splice(index, 1);
 }
 
 // Add word percentage tooltip to node
