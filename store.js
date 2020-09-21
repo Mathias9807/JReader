@@ -113,6 +113,10 @@ async function sync() {
     // and GET the servers dictionary
     var response = await fetch(syncIP);
     var data = await response.json();
+    for (let w of data.uDict) uDict.add(w);
+    for (let w of data.oDict) oDict.add(w);
+    writeUDict();
+    writeODict();
     console.log("Retrieved:", data);
   }catch (err) {
     console.log(err);
