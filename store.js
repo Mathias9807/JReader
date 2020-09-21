@@ -115,8 +115,8 @@ async function sync() {
     var data = await response.json();
     for (let w of data.uDict) uDict.add(w);
     for (let w of data.oDict) oDict.add(w);
-    writeUDict();
-    writeODict();
+    await writeUDict();
+    await writeODict();
     console.log("Retrieved:", data);
   }catch (err) {
     console.log(err);
@@ -165,6 +165,6 @@ function throttle(callback, limit) {
     }else {
       queued = true;                  // A call was blocked
     }
-  }
+  };
 }
 

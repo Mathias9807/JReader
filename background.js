@@ -167,7 +167,7 @@ async function findBreaks(text, forcedBreaks) {
   var marks = await findMarkings(words);
 
   return { words: words, indices: indices, breaks: breaks,
-    uWords: marks.uWords, oWords: marks.oWords }
+    uWords: marks.uWords, oWords: marks.oWords };
 }
 
 // Find what words are in uDict and oDict
@@ -188,7 +188,7 @@ function findMarkings(words, firstChange=0, uWordsOld, oWordsOld) {
   }
   console.log("\tDone");
 
-  return { uWords: uWords, oWords: oWords }
+  return { uWords: uWords, oWords: oWords };
 }
 
 function findLongestWord(text) {
@@ -205,10 +205,13 @@ async function loadIndexes() {
   console.log("Attempting to fetch dictionary and indexes from localstorage");
   var localStorage = await browser.storage.local.get(["d_index", "k_index", "r_index"]);
   d_index = localStorage["d_index"];
+  d_index = typeof d_index == 'string' ? JSON.parse(d_index) : d_index;
   // Key-value from: Kanji reading of word -> array of indices in dict
   k_index = localStorage["k_index"];
+  k_index = typeof k_index == 'string' ? JSON.parse(k_index) : k_index;
   // Key-value from: Kana reading of word -> array of indices in dict
   r_index = localStorage["r_index"];
+  r_index = typeof r_index == 'string' ? JSON.parse(r_index) : r_index;
 
   await loadDict();
 }
@@ -265,9 +268,9 @@ async function loadDict() {
   // Store the indexes
   console.log("Saving the indexes");
   try {
-    await browser.storage.local.set({"d_index": d_index});
-    await browser.storage.local.set({"k_index": k_index});
-    await browser.storage.local.set({"r_index": r_index});
+    await browser.storage.local.set({"d_index": JSON.stringify(d_index)});
+    await browser.storage.local.set({"k_index": JSON.stringify(k_index)});
+    await browser.storage.local.set({"r_index": JSON.stringify(r_index)});
   }catch (e) {
     console.log(e);
   }

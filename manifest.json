@@ -25,14 +25,16 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["jquery-3.4.1.min.js", "jreader.js"],
+      "js": ["node_modules/webextension-polyfill/dist/browser-polyfill.min.js",
+        "jquery-3.4.1.min.js", "jreader.js"],
       "css": ["jreader.css"],
       "run_at": "document_idle"
     }
   ],
 
   "background": {
-      "scripts": ["jquery-3.4.1.min.js", "store.js", "background.js"]
+      "scripts": ["node_modules/webextension-polyfill/dist/browser-polyfill.min.js",
+        "jquery-3.4.1.min.js", "store.js", "background.js"]
   },
 
   "web_accessible_resources": [
