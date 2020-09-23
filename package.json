@@ -5,8 +5,7 @@
   "main": "jreader.js",
   "dependencies": {
     "eslint-plugin-no-floating-promise": "^1.0.1",
-    "web-ext": "^5.0.0",
-    "webextension-polyfill": "^0.6.0"
+    "web-ext": "^5.0.0"
   },
   "devDependencies": {
     "eslint": "^7.9.0",
