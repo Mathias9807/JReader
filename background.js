@@ -80,11 +80,11 @@ function onMessage(data, sender, response) {
       return;
     }
     case "getUDict": {
-      response(uDict);
+      response([...uDict]);
       return;
     }
     case "getODict": {
-      response(oDict);
+      response([...oDict]);
       return;
     }
     case "writeUDict": {

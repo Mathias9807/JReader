@@ -88,8 +88,8 @@ $("#delete").click(deleteDicts);
 
 async function init() {
   await browser.runtime.sendMessage({request: 'sync'});
-  uDict = await browser.runtime.sendMessage({request: 'getUDict'});
-  oDict = await browser.runtime.sendMessage({request: 'getODict'});
+  uDict = new Set(await browser.runtime.sendMessage({request: 'getUDict'}));
+  oDict = new Set(await browser.runtime.sendMessage({request: 'getODict'}));
   let dayWords = await browser.runtime.sendMessage({request: 'newToday'});
   let ip = await browser.runtime.sendMessage({request: 'syncIP'});
   let sync = await browser.runtime.sendMessage({request: 'isSynced'});

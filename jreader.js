@@ -39,8 +39,8 @@ async function selectContent(e) {
 
   addTooltip(content);
 
-  uDict = await browser.runtime.sendMessage({request: 'getUDict'});
-  oDict = await browser.runtime.sendMessage({request: 'getODict'});
+  uDict = new Set(await browser.runtime.sendMessage({request: 'getUDict'}));
+  oDict = new Set(await browser.runtime.sendMessage({request: 'getODict'}));
   await parsePage();
 }
 
