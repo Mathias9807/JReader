@@ -559,13 +559,14 @@ function floatMessage(msg) {
   // Add "background: #FFF" with as low specificity as possible as a backup for
   // mix-blend-mode. If a website doesn't set a background the default of rgba(0,0,0,0)
   // would be used which would make the floatAway text invisible.
-  if ($('body').css('background-color') === 'rgba(0, 0, 0, 0)')
-    $('body').addClass('jr-white');
+  if ($('body').css('background-color') === 'rgba(0, 0, 0, 0)') {
+    $('html').addClass('jr-white');
+  }
 
   var floatAway = $('<span class="floatAway">' + msg + '</span>').insertAfter(tooltip);
   floatAway.on('animationend', function() {
     floatAway.remove();
-    $('body').removeClass('jr-white');
+    $('*').removeClass('jr-white');
 
     // Close the popup if this float text was preventing it from closing before
     if (closingPopup) {
