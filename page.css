@@ -184,6 +184,15 @@ input {
 	width: auto;
 }
 
+#clock-setting {
+	position: absolute;
+	width: 100%;
+	height: 2em;
+	bottom: 2.5em;
+	padding-right: 1em;
+	text-align: right;
+}
+
 #status {
 	border: 1px solid #AAA;
 	border-radius: 3px;

@@ -8,6 +8,10 @@ browser.runtime.sendMessage({request: 'isActive'}).then(active => {
     $("#off").addClass('currentButton');
 });
 
+browser.runtime.sendMessage({request: 'getSwitchOverHour'}).then(hour => {
+  $('#clock-time').val(new String(hour).padStart(2,'0') + ':00');
+});
+
 async function on() {
   $("#off").removeClass('currentButton');
   $("#on").addClass('currentButton');
@@ -155,4 +159,12 @@ async function submit() {
   return false;
 }
 $("input:eq(1)").click(submit);
+
+async function switchOverTime(e) {
+  let newTime = event.target.value;
+  console.log("Set new switchover time to", newTime);
+  let hour = parseInt(/([0-9]{2}):[0-9]{2}/.exec(newTime)[0]);
+  await browser.runtime.sendMessage({request: 'setSwitchOverHour', hour: hour});
+}
+$("#clock-time").on('change', switchOverTime);
 

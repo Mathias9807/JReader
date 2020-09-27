@@ -126,6 +126,19 @@ function onMessage(data, sender, response) {
       resetDay();
       return;
     }
+    case "getSwitchOverHour": {
+      updateDayDict().then(() => {
+        response(switchOverHour);
+      });
+      return true;
+    }
+    case "setSwitchOverHour": {
+      switchOverHour = data.hour;
+      browser.storage.local.set({"switchOverHour": data.hour}).then(() => {
+        response();
+      });
+      return true;
+    }
     default: {
       console.log("No handler for command", data.request);
     }
@@ -456,5 +469,5 @@ function dictIndex(word) {
 
 /* global loadUserDicts, uDict, oDict, dayDict, syncIP, loadUserDicts,
  * updateDayDict, writeUDict, writeODict, writeSync, resetDay, connect,
- * syncConnected, syncThrottled, deleteFromSync */
+ * syncConnected, syncThrottled, deleteFromSync, switchOverHour */
 

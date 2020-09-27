@@ -5,7 +5,7 @@
  * When starting up, this will read indexes, dicts and day info from storage.local.
  */
 
-var uDict, oDict, dayDict, syncIP, syncConnected = false;
+var uDict, oDict, dayDict, syncIP, syncConnected = false, switchOverHour = 0;
 
 async function loadUserDicts() {
   var localStorage = await browser.storage.local.get(["uDict", "oDict",
@@ -34,13 +34,23 @@ async function loadUserDicts() {
 }
 
 async function updateDayDict() {
-  var localStorage = await browser.storage.local.get(["dayDict", "dayDate"]);
+  var localStorage = await browser.storage.local.get(["dayDict", "dayDate",
+    "switchOverHour"]);
+
+  if (localStorage["switchOverHour"])
+    switchOverHour = localStorage["switchOverHour"];
 
   // Check if it's been a new day, if so, set dayDict to uDict
   var lastDate = new Date(1970, 1, 0);
   if (localStorage["dayDate"])
     lastDate = new Date(JSON.parse(localStorage["dayDate"]));
+
   var now = new Date();
+  // Adjust what hour the day should tick over at
+  now.setTime(now.getTime() - (switchOverHour<12?switchOverHour:switchOverHour-24)
+        * 60*60*1000);
+
+  // Check if we're at a new day
   if (10000*now.getFullYear() + 100*now.getMonth() + now.getDate() >
       10000*lastDate.getFullYear() + 100*lastDate.getMonth() + lastDate.getDate()) {
 

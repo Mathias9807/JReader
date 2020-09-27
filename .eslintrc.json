@@ -17,6 +17,7 @@
         "no-unused-vars": "off",
         "no-undef": "warn",
         "no-cond-assign": "off",
+        "no-global-assign": "off",
         "require-await": "warn",
         "no-floating-promise/no-floating-promise": "warn",
         "semi": "warn"
