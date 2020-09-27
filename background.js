@@ -371,7 +371,7 @@ function isWord(word) {
   // If so this will turn it into base form
   let polite = word.replace(/る$/, '').replace(/ます$/, '').replace(/ました$/, '')
               .replace(/ません$/, '').replace(/たい$/, '').replace(/たく$/, '')
-              .replace(/ましょう$/, '').replace(/そう$/, '');
+              .replace(/ましょう$/, '').replace(/そう$/, '').replace(/ながら$/, '');
 
   // Turn base form into verb
   if (inDict(polite + 'る')) return polite + 'る';
