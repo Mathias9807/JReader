@@ -117,9 +117,10 @@ function onMessage(data, sender, response) {
       return;
     }
     case "newToday": {
-      updateDayDict();
-      response([...uDict].filter(i => !dayDict.has(i)).length);
-      return;
+      updateDayDict().then(() => {
+        response([...uDict].filter(i => !dayDict.has(i)).length);
+      });
+      return true;
     }
     case "resetDay": {
       resetDay();
