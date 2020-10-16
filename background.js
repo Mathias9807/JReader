@@ -55,6 +55,10 @@ function onMessage(data, sender, response) {
       return;
     }
     case "findBreaks": {
+      // Check if it's been a new day, we do it here because this function will be
+      // called infrequently and right before the plugin may have to add new words
+      updateDayDict();
+
       response(findBreaks(data.text, data.forcedBreaks));
       return;
     }
