@@ -34,8 +34,9 @@
   color: #88D;
   margin-left: 1px;
 }
-#jr-tooltip > img {
+#jr-tooltip>img#jr-check, #jr-tooltip>img#jr-close {
   height: 16px;
+  width: auto;
   vertical-align: middle;
   margin: 0;
   padding: 0;
