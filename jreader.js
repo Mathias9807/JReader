@@ -329,6 +329,9 @@ function flatIndex(pNode, target, index) {
     if (!cNode.contains(target)) {
       var temp = $(cNode).clone();
       temp.find("rt").remove();
+      // Comment nodes will have a textContent ONLY if they are the root element
+      // Just ignore comments
+      if (temp[0] === Node.COMMENT_NODE) continue;
       newIndex += temp[0].textContent.length;
     }
 
